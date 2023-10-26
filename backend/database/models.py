@@ -41,6 +41,14 @@ class Device(db.Model):
     status: Mapped[int] = mapped_column(db.Integer, nullable=False)
     ip: Mapped[str] = mapped_column(db.String(20), nullable=True)
     
+    def __init__(self, uid, name, description, type, status, ip):
+        self.uid = uid
+        self.name = name
+        self.description = description
+        self.type = type
+        self.status = status
+        self.ip = ip
+    
     def __repr__(self):
         return '<Device %r>' % self.name
     

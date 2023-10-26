@@ -32,7 +32,7 @@ class UserLogin(Resource):
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
         args = parser.parse_args(strict=True)
-        print(args)
+        # print(args)
         
         username = args['username']
         password = args['password']
