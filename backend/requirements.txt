@@ -1,0 +1,8 @@
+# flask
+flask
+flask-restful
+setuptools
+Flask-SQLAlchemy
+flasgger
+pymysql
+flask-jwt-extended

@@ -1,3 +1,5 @@
 # vscode
 .vscode/
 .history/
+
+.DS_Store
