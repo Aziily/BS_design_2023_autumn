@@ -122,3 +122,17 @@ class UserUpdate(Resource):
             db.session.commit()
             udata = marshal(user, user_data)
             return BasicResponse(HTTPStatus.OK, "update user info success", udata)
+        
+class UserDelete(Resource):
+    @marshal_with(basic_response)
+    @jwt_required()
+    def post(self):
+        username = get_jwt_identity()
+        user = User.query.filter_by(username=username).first()
+        
+        if user is None:
+            return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
+        else:
+            db.session.delete(user)
+            db.session.commit()
+            return BasicResponse(HTTPStatus.OK, "delete user success", None)

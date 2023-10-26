@@ -22,7 +22,10 @@ class DeviceList(Resource):
             user = User.query.filter_by(username=username).first()
             if user is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
-            devices = Device.query.filter_by(uid=user.uid).all()
+            if user.role == 0:
+                devices = Device.query.all()
+            else:
+                devices = Device.query.filter_by(uid=user.uid).all()
             if devices is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
             ddata = marshal(devices, device_data)
@@ -79,7 +82,10 @@ class DeviceInfo(Resource):
             user = User.query.filter_by(username=username).first()
             if user is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
-            device = Device.query.filter_by(did=did).first()
+            if user.role == 0:
+                device = Device.query.filter_by(did=did).first()
+            else:
+                device = Device.query.filter_by(did=did, uid=user.uid).first()
             if device is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
             ddata = marshal(device, device_data)
@@ -97,7 +103,10 @@ class DeviceUpdate(Resource):
             user = User.query.filter_by(username=username).first()
             if user is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
-            device = Device.query.filter_by(did=did).first()
+            if user.role == 0:
+                device = Device.query.filter_by(did=did).first()
+            else:
+                device = Device.query.filter_by(did=did, uid=user.uid).first()
             if device is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
             parser = reqparse.RequestParser()
@@ -129,7 +138,10 @@ class DeviceDelete(Resource):
             user = User.query.filter_by(username=username).first()
             if user is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
-            device = Device.query.filter_by(did=did).first()
+            if user.role == 0:
+                device = Device.query.filter_by(did=did).first()
+            else:
+                device = Device.query.filter_by(did=did, uid=user.uid).first()
             if device is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
             db.session.delete(device)
