@@ -4,6 +4,10 @@ from controller.user import *
 from controller.device import *
 
 def Initialize():
+    # use '/api' as prefix
+    api.prefix = '/api'
+    
+    # /user
     api.add_resource(UserRegister, '/user/register')
     api.add_resource(UserLogin, '/user/login')
     api.add_resource(UserLogout, '/user/logout')
@@ -11,6 +15,7 @@ def Initialize():
     api.add_resource(UserUpdate, '/user/update')
     api.add_resource(UserDelete, '/user/delete')
     
+    # /device
     api.add_resource(DeviceList, '/device/list')
     api.add_resource(DeviceAdd, '/device/add')
     api.add_resource(DeviceDelete, '/device/delete/<int:did>')

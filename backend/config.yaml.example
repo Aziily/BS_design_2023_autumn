@@ -1,0 +1,17 @@
+database:
+  user: "root"
+  password: ""
+  database: ""
+  ip: "127.0.0.1"
+  port: "3306"
+  SQLALCHEMY_TRACK_MODIFICATIONS: True
+  SQLALCHEMY_ECHO: True
+  SQLALCHEMY_COMMIT_ON_TEARDOWN: False
+
+jwt:
+  JWT_SECRET_KEY: "super-secret"
+
+service:
+  host: "127.0.0.1"
+  port: "9528"
+  debug: False

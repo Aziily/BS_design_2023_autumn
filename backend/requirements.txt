@@ -6,3 +6,4 @@ Flask-SQLAlchemy
 flasgger
 pymysql
 flask-jwt-extended
+omegaconf
