@@ -4,12 +4,7 @@ import { getToken, removeToken } from '@/utils/auth'
 const getDefaultState = () => {
   return {
     token: getToken(),
-    devices: [],
-    onlineDevices: [],
-    sensors: [],
-    actuators: [],
-    onlineSensors: [],
-    onlineActuators: []
+    devices: []
   }
 }
 
@@ -21,11 +16,6 @@ const mutations = {
   },
   SET_DEVICES: (state, devices) => {
     state.devices = devices
-    state.onlineDevices = devices.filter(device => device.status === 1)
-    state.sensors = devices.filter(device => device.type === 0)
-    state.actuators = devices.filter(device => device.type === 1)
-    state.onlineSensors = devices.filter(device => device.type === 0 && device.status === 1)
-    state.onlineActuators = devices.filter(device => device.type === 1 && device.status === 1)
   }
 }
 

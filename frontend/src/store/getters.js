@@ -11,11 +11,6 @@ const getters = {
   lastLogin: state => state.user.lastLogin,
   lastIP: state => state.user.lastIP,
 
-  devices: state => state.device.devices,
-  onlineDevices: state => state.device.onlineDevices,
-  sensors: state => state.device.sensors,
-  actuators: state => state.device.actuators,
-  onlineSensors: state => state.device.onlineSensors,
-  onlineActuators: state => state.device.onlineActuators
+  devices: state => state.device.devices
 }
 export default getters
