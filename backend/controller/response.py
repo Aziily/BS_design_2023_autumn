@@ -1,7 +1,7 @@
 from flask_restful import fields, marshal_with
 
 basic_response = {
-    'status': fields.Integer,
+    'code': fields.Integer,
     'token': fields.String,
     'message': fields.String,
     'data': fields.Raw
@@ -28,8 +28,8 @@ device_data = {
 }
 
 class BasicResponse:
-    def __init__(self, status, message, data, token=None):
-        self.status = status
+    def __init__(self, code, message, data, token=None):
+        self.code = code
         self.message = message
         self.data = data
         self.token = token

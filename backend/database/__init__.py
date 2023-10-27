@@ -11,6 +11,15 @@ from .models import *
 def Initialize():
     db.drop_all()
     db.create_all()
-    db.session.add(User("admin", "admin", "", "", 0))
-    db.session.add(User("user", "user", "", "", 1))
+    # user
+    db.session.add(User("admin", "admin123", "admin@example.com", "", 0))
+    db.session.add(User("user", "user123", "user@example.com", "", 1))
+    
+    # device
+    db.session.add(Device(1, "device1", "", 0, 0, ""))
+    db.session.add(Device(1, "device2", "", 0, 0, ""))
+    db.session.add(Device(1, "device3", "", 0, 1, ""))
+    db.session.add(Device(1, "device4", "", 1, 1, ""))
+    db.session.add(Device(1, "device5", "", 1, 0, ""))
+    
     db.session.commit()

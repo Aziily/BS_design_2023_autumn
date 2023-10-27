@@ -1,3 +1,4 @@
+import datetime
 import flask
 from flask import Flask
 from flask_restful import Api
@@ -26,9 +27,8 @@ class Config(object):
     
     # jwt
     app.config["JWT_SECRET_KEY"] = conf.jwt.JWT_SECRET_KEY
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=conf.jwt.JWT_ACCESS_TOKEN_EXPIRES)
     
-    
-
 app.config.from_object(Config)
 
 db.init_app(app)

@@ -32,7 +32,7 @@ class UserLogin(Resource):
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
         args = parser.parse_args(strict=True)
-        # print(args)
+        print(args)
         
         username = args['username']
         password = args['password']
@@ -55,7 +55,6 @@ class UserLogin(Resource):
         
 class UserLogout(Resource):
     @marshal_with(basic_response)
-    @jwt_required()
     def get(self):
         return BasicResponse(HTTPStatus.OK, "logout success", None)
     
@@ -65,7 +64,7 @@ class UserRegister(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
-        parser.add_argument('email', type=str, required=False)
+        parser.add_argument('email', type=str, required=True)
         parser.add_argument('phone', type=str, required=False)
         args = parser.parse_args(strict=True)
         

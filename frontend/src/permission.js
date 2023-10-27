@@ -43,6 +43,25 @@ router.beforeEach(async(to, from, next) => {
           NProgress.done()
         }
       }
+      const hasGetDevices = store.getters.devices.length !== 0
+      // console.log(store.getters.devices)
+      // console.log(hasGetDevices)
+      if (hasGetDevices) {
+        next()
+      } else {
+        try {
+          // get user info
+          await store.dispatch('device/list')
+
+          next()
+        } catch (error) {
+          // remove token and go to login page to re-login
+          await store.dispatch('device/resetToken')
+          Message.error(error || 'Has Error')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+        }
+      }
     }
   } else {
     /* has no token*/

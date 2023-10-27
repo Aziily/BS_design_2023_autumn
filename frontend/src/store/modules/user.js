@@ -6,7 +6,12 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    email: '',
+    phone: '',
+    role: 1,
+    lastLogin: '',
+    lastIP: ''
   }
 }
 
@@ -24,6 +29,21 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_PHONE: (state, phone) => {
+    state.phone = phone
+  },
+  SET_ROLE: (state, role) => {
+    state.role = role
+  },
+  SET_LASTLOGIN: (state, lastLogin) => {
+    state.lastLogin = lastLogin
+  },
+  SET_LASTIP: (state, lastIP) => {
+    state.lastIP = lastIP
   }
 }
 
@@ -33,9 +53,9 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        // const { data } = response
+        commit('SET_TOKEN', response.token)
+        setToken(response.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -53,10 +73,17 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const { username, email, phone, role, last_login, last_ip } = data
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_NAME', username)
+        // commit('SET_AVATAR', avatar)
+        commit('SET_AVATAR', 'https://tse1-mm.cn.bing.net/th/id/OIP-C.YBJarmG4iRVcb7VseGgHMQHaHn?pid=ImgDet&rs=1')
+        commit('SET_EMAIL', email)
+        commit('SET_PHONE', phone)
+        commit('SET_ROLE', role)
+        commit('SET_LASTLOGIN', last_login)
+        commit('SET_LASTIP', last_ip)
+        // console.log(data)
         resolve(data)
       }).catch(error => {
         reject(error)

@@ -6,7 +6,7 @@ class User(db.Model):
     uid: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(db.String(20), nullable=False)
     password: Mapped[str] = mapped_column(db.String(20), nullable=False)
-    email: Mapped[str] = mapped_column(db.String(20), nullable=True)
+    email: Mapped[str] = mapped_column(db.String(100), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(db.String(20), nullable=True)
     role: Mapped[int] = mapped_column(db.Integer, nullable=False)
     
@@ -37,7 +37,9 @@ class Device(db.Model):
     uid: Mapped[int] = mapped_column(db.Integer, nullable=False)
     name: Mapped[str] = mapped_column(db.String(20), nullable=False)
     description: Mapped[str] = mapped_column(db.String(100), nullable=True)
+    # 0: sensor, 1: actuator
     type: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # 0: offline, 1: online
     status: Mapped[int] = mapped_column(db.Integer, nullable=False)
     ip: Mapped[str] = mapped_column(db.String(20), nullable=True)
     

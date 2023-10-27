@@ -10,8 +10,9 @@ database:
 
 jwt:
   JWT_SECRET_KEY: "super-secret"
+  JWT_ACCESS_TOKEN_EXPIRES: 60
 
 service:
   host: "127.0.0.1"
-  port: "9528"
+  port: "5000"
   debug: False
