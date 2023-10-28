@@ -1,55 +1,50 @@
 <template>
-  <el-col style="margin-left:8px;" class="device-summary">
+  <el-col class="device-all">
     <el-card class="device-summary">
-      <el-col>
-        <el-row>
-          <span class="device-summary-head">Device Summary</span>
-        </el-row>
-        <!-- <el-row>{{ devices }}</el-row> -->
-        <el-row>
-          <el-col :span="12">
+      <el-row>
+        <span class="card-head">Device Summary</span>
+      </el-row>
+      <!-- <el-row>{{ devices }}</el-row> -->
+      <el-row>
+        <el-col class="online-data" :span="12">
+          <div class="message-item">
             <div class="online-device">
               <el-row><span class="head">Online</span></el-row>
               <el-row><span class="body">{{ onlineDevices }}</span></el-row>
             </div>
-          </el-col>
-          <el-col :span="6">
-            <span class="split-line">/</span>
-          </el-col>
-          <el-col :span="12">
+            <div class="split-line"><span>/</span></div>
             <div class="total-device">
-              <el-row><span class="head">Total</span></el-row>
               <el-row><span class="body">{{ totalDevices }}</span></el-row>
             </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="package-count">
+          </div>
+        </el-col>
+        <el-col class="package-count" :span="12">
+          <div class="message-item">
+            <div>
               <el-row><span class="head">Package</span></el-row>
               <el-row><span class="body">{{ packageCount }}</span></el-row>
             </div>
-          </el-col>
-        </el-row>
-      </el-col>
+          </div>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="device-kind">
-      <el-col>
-        <el-row>
-          <span class="device-kind-head">Device Kind</span>
-        </el-row>
-        <el-row>
-          <el-col :span="20">
-            <div class="sensor-device">
-              <el-row><div id="sensor-device" style="width:100%;height:278px;float:left;"></div></el-row>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="actuator-device">
-              <el-row><div id="actuator-device" style="width:100%;height:278px;float:left;"></div></el-row>
-            </div>
-          </el-col>
-        </el-row>
-      </el-col>
+      <el-row>
+        <span class="card-head">Device Kind</span>
+      </el-row>
+      <el-row>
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+          <div class="device-chart">
+            <div id="sensor-device" style="width:100%;height:100%;" />
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+          <div class="device-chart">
+            <div id="actuator-device" style="width:100%;height:100%;" />
+          </div>
+        </el-col>
+      </el-row>
     </el-card>
 
   </el-col>
@@ -103,38 +98,110 @@ export default {
     },
     drawSensorDevice() {
       var myChart = echarts.init(document.getElementById('sensor-device'))
+      // three color from light to deep (blue)
+      var pieColor = ['#E8F2FF', '#5C9EFF']
       var option = {
-        title: {
-          text: 'Sensor Device',
-          left: 'center',
-          top: 20,
-          textStyle: {
-            color: '#ccc'
-          },
-          x: 'center'
+        title: [
+          {
+            text: 'Sensor Online',
+            textAlign: 'center',
+            x: '50%',
+            textStyle: {
+              color: '#000000',
+              fontSize: 16
+            }
+          }
+        ],
+        legend: {
+          show: false
         },
-        grid: { containLabel: true },
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c}'
+          show: false
         },
         series: [
           {
-            name: 'Sensor Device',
+            name: 'base',
             type: 'pie',
-            radius: '55%',
-            center: ['50%', '50%'],
-            data: [
-              { value: this.onlineSensors, name: 'Online' },
-              { value: this.sensors - this.onlineSensors, name: 'Offline' }
+            radius: [
+              '60%',
+              '70%'
             ],
+            labelLine: {
+              show: false
+            },
+            emphasis: {
+              disabled: true
+            },
             itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, .5)'
+              color: pieColor[0]
+            },
+            data: [{
+              value: this.sensors
+            }]
+          },
+          {
+            name: 'sensor-online',
+            type: 'pie',
+            zlevel: 1,
+            startAngle: 90,
+            radius: [
+              '60%',
+              '70%'
+            ],
+            avoidLabelOverlap: false,
+            labelLine: {
+              show: false
+            },
+            emphasis: {
+              disabled: true
+            },
+            data: [
+              {
+                value: this.onlineSensors,
+                name: 'online',
+                itemStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                      {
+                        offset: 0,
+                        color: pieColor[1]
+                      },
+                      {
+                        offset: 0.95,
+                        color: pieColor[0]
+                      }
+                    ],
+                    global: false
+                  }
+                },
+                label: {
+                  formatter: '{d}%',
+                  position: 'center',
+                  color: '#172B4D',
+                  fontSize: 20
+                }
+              },
+              {
+                name: 'offline',
+                label: {
+                  show: false
+                },
+                itemStyle: {
+                  normal: {
+                    color: pieColor[0]
+                  },
+                  emphasis: {
+                    color: pieColor[0]
+                  }
+                },
+                value: this.sensors - this.onlineSensors
               }
-            }
+            ]
           }
         ]
       }
@@ -142,36 +209,109 @@ export default {
     },
     drawActuatorDevice() {
       var myChart = echarts.init(document.getElementById('actuator-device'))
+      var pieColor = ['#E8F2FF', '#5C9EFF']
       var option = {
-        title: {
-          text: 'Actuator Device',
-          left: 'center',
-          top: 20,
-          textStyle: {
-            color: '#ccc'
+        title: [
+          {
+            text: 'Actuator Online',
+            textAlign: 'center',
+            x: '50%',
+            textStyle: {
+              color: '#000000',
+              fontSize: 16
+            }
           }
+        ],
+        legend: {
+          show: false
         },
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c}'
+          show: false
         },
         series: [
           {
-            name: 'Sensor Device',
+            name: 'base',
             type: 'pie',
-            radius: '55%',
-            center: ['50%', '50%'],
-            data: [
-              { value: this.onlineActuators, name: 'Online' },
-              { value: this.actuators - this.onlineActuators, name: 'Offline' }
+            radius: [
+              '60%',
+              '70%'
             ],
+            labelLine: {
+              show: false
+            },
+            emphasis: {
+              disabled: true
+            },
             itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, .5)'
+              color: pieColor[0]
+            },
+            data: [{
+              value: this.actuators
+            }]
+          },
+          {
+            name: 'actuator-online',
+            type: 'pie',
+            zlevel: 1,
+            startAngle: 90,
+            radius: [
+              '60%',
+              '70%'
+            ],
+            avoidLabelOverlap: false,
+            labelLine: {
+              show: false
+            },
+            emphasis: {
+              disabled: true
+            },
+            data: [
+              {
+                value: this.onlineActuators,
+                name: 'online',
+                itemStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                      {
+                        offset: 0,
+                        color: pieColor[1]
+                      },
+                      {
+                        offset: 0.95,
+                        color: pieColor[0]
+                      }
+                    ],
+                    global: false
+                  }
+                },
+                label: {
+                  formatter: '{d}%',
+                  position: 'center',
+                  color: '#172B4D',
+                  fontSize: 20
+                }
+              },
+              {
+                name: 'offline',
+                label: {
+                  show: false
+                },
+                itemStyle: {
+                  normal: {
+                    color: pieColor[0]
+                  },
+                  emphasis: {
+                    color: pieColor[0]
+                  }
+                },
+                value: this.actuators - this.onlineActuators
               }
-            }
+            ]
           }
         ]
       }
@@ -180,3 +320,102 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+.card-head {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+}
+.card-head::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 2px;
+  background-color: #000000;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+.device-summary {
+  margin-bottom: 32px;
+  padding: 12px;
+  padding-bottom: 32px;
+
+  .message-item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  .device-summary-head {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+  }
+  .split-line {
+    display: inline-block;
+    padding-right: 30px;
+    span {
+      font-size: 32px;
+      font-weight: bold;
+      color: #000000;
+    }
+  }
+  .online-device {
+    display: inline-block;
+    .head {
+      font-size: 16px;
+      color: #5C9EFF;
+      padding-bottom: 10px;
+    }
+    .body {
+      font-size: 32px;
+      font-weight: bold;
+      color: #5C9EFF;
+    }
+  }
+  .total-device {
+    display: inline-block;
+    .body {
+      font-size: 24px;
+      font-weight: bold;
+      color: #172B4D;
+    }
+  }
+  .package-count {
+    .head {
+      font-size: 16px;
+      color: #172B4D;
+      padding-bottom: 10px;
+    }
+    .body {
+      font-size: 32px;
+      font-weight: bold;
+      color: #172B4D;
+    }
+  }
+  .split-line {
+    font-size: 24px;
+    font-weight: bold;
+    color: #172B4D;
+  }
+}
+
+.device-kind {
+  margin-bottom: 32px;
+  padding: 12px;
+  padding-bottom: 32px;
+}
+
+.device-chart {
+  height: 278px;
+
+  div {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+</style>

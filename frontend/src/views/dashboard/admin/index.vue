@@ -2,36 +2,25 @@
   <div class="dashboard-editor-container">
     <github-corner class="github-corner" />
 
-    <el-row :gutter="32" style="margin-bottom:32px;">
-      <el-col :xs="{span: 20}" :sm="{span: 10}" :md="{span: 10}" :lg="{span: 5}" :xl="{span: 5}">
-        <box-card />
+    <el-row :gutter="32">
+      <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8" style="margin-bottom:32px;wdith:100%">
+        <div class="box-wrapper">
+          <box-card />
+          <el-card style="margin-top: 32px;">
+            <div display="flex" justify-content="center" style="margin-bottom: 16px;margin-top: 16px;" align="center">
+              <img src="https://i0.wp.com/tinkercademy.com/wp-content/uploads/2018/04/python-icon.png" style="height: 80px;margin: 10px;">
+              <img src="https://www.probytes.net/wp-content/uploads/2018/10/flask-logo-png-transparent-233x300.png" style="height: 80px;margin: 10px;">
+              <img src="https://th.bing.com/th/id/OIP._IBVgzNUmjeZQOT6fhq2HQHaHa?pid=ImgDet&rs=1" style="height: 80px;margin: 10px;">
+              <img src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png" style="height: 80px;margin: 10px;">
+            </div>
+          </el-card>
+        </div>
       </el-col>
-      <el-col :xs="{span: 20}" :sm="{span: 10}" :md="{span: 10}" :lg="{span: 5}" :xl="{span: 5}">
+      <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="16">
         <device-summary />
       </el-col>
     </el-row>
 
-    <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
-    </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <raddar-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
-    </el-row> -->
   </div>
 </template>
 
@@ -54,6 +43,7 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-editor-container {
+  height: 95vh;
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
@@ -65,10 +55,9 @@ export default {
     right: 0;
   }
 
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
+  .box-wrapper {
+    margin-left: 16px;
+    margin-right: 16px;
   }
 }
 

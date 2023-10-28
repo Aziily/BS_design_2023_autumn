@@ -1,5 +1,5 @@
 <template>
-  <el-card class="box-card-component" style="margin-left:8px;">
+  <el-card class="box-card-component">
     <div slot="header" class="box-card-header">
       <img src="https://wallpapercave.com/wp/wp6057449.jpg">
     </div>
