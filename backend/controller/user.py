@@ -9,6 +9,7 @@ from http import HTTPStatus
 
 from controller.response import *
 from database.models import *
+from utils.valid import checkEmail
 
 class UserLogin(Resource):
     @marshal_with(basic_response)
@@ -73,6 +74,12 @@ class UserRegister(Resource):
         email = args['email']
         phone = args['phone']
         
+        if len(username) < 6 or len(username) > 20:
+            return BasicResponse(HTTPStatus.BAD_REQUEST, "username length error", None)
+        if len(password) < 6 or len(password) > 20:
+            return BasicResponse(HTTPStatus.BAD_REQUEST, "password length error", None)
+        if not checkEmail(email):
+            return BasicResponse(HTTPStatus.BAD_REQUEST, "email format error", None)
         user = User.query.filter_by(username=username).first()
         
         if user is None:
@@ -105,7 +112,7 @@ class UserUpdate(Resource):
         parser.add_argument('email', type=str, required=False)
         parser.add_argument('phone', type=str, required=False)
         args = parser.parse_args(strict=True)
-        
+                
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         
@@ -113,8 +120,12 @@ class UserUpdate(Resource):
             return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
         else:
             if args['password'] is not None:
+                if len(args['password']) < 6 or len(args['password']) > 20:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "password length error", None)
                 user.password = args['password']
             if args['email'] is not None:
+                if not checkEmail(args['email']):
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "email format error", None)
                 user.email = args['email']
             if args['phone'] is not None:
                 user.phone = args['phone']

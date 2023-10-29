@@ -41,7 +41,7 @@ class Device(db.Model):
     type: Mapped[int] = mapped_column(db.Integer, nullable=False)
     # 0: offline, 1: online
     status: Mapped[int] = mapped_column(db.Integer, nullable=False)
-    ip: Mapped[str] = mapped_column(db.String(20), nullable=True)
+    ip: Mapped[str] = mapped_column(db.String(20), nullable=False)
     
     def __init__(self, uid, name, description, type, status, ip):
         self.uid = uid

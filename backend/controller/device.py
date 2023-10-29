@@ -9,6 +9,7 @@ from http import HTTPStatus
 
 from controller.response import *
 from database.models import *
+from utils import checkIPV4
 
 class DeviceList(Resource):
     @marshal_with(basic_response)
@@ -56,6 +57,17 @@ class DeviceAdd(Resource):
             type = args['type']
             status = args['status']
             ip = args['ip']
+            
+            if len(name) > 20:
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device name too long", None)
+            if description is not None and len(description) > 100:
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device description too long", None)
+            if type != 0 and type != 1:
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device type error", None)
+            if status != 0 and status != 1:
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device status error", None)
+            if not checkIPV4(ip):
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device ip format error", None)
             
             device = Device(
                 uid=user.uid,
@@ -117,11 +129,26 @@ class DeviceUpdate(Resource):
             parser.add_argument('ip', type=str, required=False)
             args = parser.parse_args(strict=True)
             
-            if args['name'] is not None: device.name = args['name']
-            if args['description'] is not None: device.description = args['description']
-            if args['type'] is not None: device.type = args['type']
-            if args['status'] is not None: device.status = args['status']
-            if args['ip'] is not None: device.ip = args['ip']
+            if args['name'] is not None: 
+                if len(args['name']) > 20:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device name too long", None)
+                device.name = args['name']
+            if args['description'] is not None: 
+                if len(args['description']) > 100:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device description too long", None)
+                device.description = args['description']
+            if args['type'] is not None: 
+                if args['type'] != 0 and args['type'] != 1:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device type error", None)
+                device.type = args['type']
+            if args['status'] is not None: 
+                if args['status'] != 0 and args['status'] != 1:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device status error", None)
+                device.status = args['status']
+            if args['ip'] is not None: 
+                if not checkIPV4(args['ip']):
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device ip format error", None)
+                device.ip = args['ip']
             db.session.commit()
             ddata = marshal(device, device_data)
             return BasicResponse(HTTPStatus.OK, "update device success", ddata, token)

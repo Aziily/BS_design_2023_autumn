@@ -16,9 +16,9 @@ def Initialize():
     db.session.add(User("user", "user123", "user@example.com", "", 1))
     
     # device
-    db.session.add(Device(1, "device1", "", 0, 0, ""))
-    db.session.add(Device(1, "device2", "", 0, 0, ""))
-    db.session.add(Device(1, "device3", "", 0, 1, ""))
+    db.session.add(Device(1, "device1", "hello", 0, 0, ""))
+    db.session.add(Device(1, "device2", "test", 0, 0, ""))
+    db.session.add(Device(1, "device3", "asdiuhasdiuhaisdhaioshdoasfcbuiasdgopiasgdiuassbsbgduias", 0, 1, ""))
     db.session.add(Device(1, "device4", "", 1, 1, ""))
     db.session.add(Device(1, "device5", "", 1, 0, ""))
     

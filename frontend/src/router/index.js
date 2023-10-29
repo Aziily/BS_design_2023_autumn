@@ -56,6 +56,27 @@ export const constantRoutes = [
   },
 
   {
+    path: '/device',
+    component: Layout,
+    name: 'Device',
+    meta: { title: 'Device', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'sensor',
+        name: 'Sensor',
+        component: () => import('@/views/device/sensor/index'),
+        meta: { title: 'Sensor', icon: 'el-icon-monitor' }
+      },
+      {
+        path: 'actuator',
+        name: 'Actuator',
+        component: () => import('@/views/device/actuator/index'),
+        meta: { title: 'Actuator', icon: 'el-icon-phone' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
