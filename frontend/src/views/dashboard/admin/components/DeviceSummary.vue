@@ -6,7 +6,7 @@
       </el-row>
       <!-- <el-row>{{ devices }}</el-row> -->
       <el-row>
-        <el-col class="online-data" :span="12">
+        <el-col class="online-data" :span="16">
           <div class="message-item">
             <div class="online-device">
               <el-row><span class="head">Online</span></el-row>
@@ -18,11 +18,11 @@
             </div>
           </div>
         </el-col>
-        <el-col class="package-count" :span="12">
+        <el-col class="package-count" :span="8">
           <div class="message-item">
             <div>
               <el-row><span class="head">Package</span></el-row>
-              <el-row><span class="body">{{ packageCount }}</span></el-row>
+              <el-row><span class="body">{{ sensorPackageCount + actuatorPackageCount }}</span></el-row>
             </div>
           </div>
         </el-col>
@@ -34,14 +34,19 @@
         <span class="card-head">Device Kind</span>
       </el-row>
       <el-row>
-        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
           <div class="device-chart">
             <div id="sensor-device" style="width:100%;height:100%;" />
           </div>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
           <div class="device-chart">
             <div id="actuator-device" style="width:100%;height:100%;" />
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+          <div class="device-chart">
+            <div id="package-count" style="width:100%;height:100%;" />
           </div>
         </el-col>
       </el-row>
@@ -52,6 +57,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { data } from '@/api/device'
+import { getToken } from '@/utils/auth'
 import echarts from 'echarts'
 
 export default {
@@ -59,7 +66,8 @@ export default {
     return {
       onlineDevices: 0,
       totalDevices: 0,
-      packageCount: 0,
+      sensorPackageCount: 0,
+      actuatorPackageCount: 0,
       sensors: 0,
       actuators: 0,
       onlineSensors: 0,
@@ -90,7 +98,24 @@ export default {
     setData() {
       this.onlineDevices = this.devices.filter(device => device.status === 1).length
       this.totalDevices = this.devices.length
-      this.packageCount = 14514
+      this.sensorPackageCount = 0
+      this.actuatorPackageCount = 0
+      if (this.devices.length !== 0) {
+        for (let i = 0; i < this.devices.length; i++) {
+          data(
+            getToken(), this.devices[i].did
+          ).then(response => {
+            if (this.devices[i].type === 0) {
+              this.sensorPackageCount += response.data.length
+            } else {
+              this.actuatorPackageCount += response.data.length
+            }
+            this.drawPackageCount()
+          }).catch(error => {
+            console.log(error)
+          })
+        }
+      }
       this.sensors = this.devices.filter(device => device.type === 0).length
       this.actuators = this.devices.filter(device => device.type === 1).length
       this.onlineSensors = this.devices.filter(device => device.type === 0 && device.status === 1).length
@@ -104,19 +129,22 @@ export default {
         title: [
           {
             text: 'Sensor Online',
+            subtext: 'Total: ' + this.sensors,
             textAlign: 'center',
             x: '50%',
             textStyle: {
               color: '#000000',
               fontSize: 16
-            }
+            },
+            padding: [0, 0, 20, 0]
           }
         ],
         legend: {
           show: false
         },
         tooltip: {
-          show: false
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         series: [
           {
@@ -205,6 +233,7 @@ export default {
           }
         ]
       }
+      myChart.clear()
       myChart.setOption(option)
     },
     drawActuatorDevice() {
@@ -214,19 +243,22 @@ export default {
         title: [
           {
             text: 'Actuator Online',
+            subtext: 'Total: ' + this.actuators,
             textAlign: 'center',
             x: '50%',
             textStyle: {
               color: '#000000',
               fontSize: 16
-            }
+            },
+            padding: [0, 0, 20, 0]
           }
         ],
         legend: {
           show: false
         },
         tooltip: {
-          show: false
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         series: [
           {
@@ -314,6 +346,57 @@ export default {
             ]
           }
         ]
+      }
+      myChart.clear()
+      myChart.setOption(option)
+    },
+    drawPackageCount() {
+      var myChart = echarts.init(document.getElementById('package-count'))
+      var option = {
+        title: {
+          text: 'Package Count',
+          subtext: 'Total: ' + (this.sensorPackageCount + this.actuatorPackageCount),
+          textAlign: 'center',
+          x: '50%',
+          textStyle: {
+            color: '#000000',
+            fontSize: 16
+          },
+          padding: [0, 0, 20, 0]
+        },
+        xAxis: {
+          type: 'category',
+          data: ['Sensor', 'Actuator']
+        },
+        yAxis: {
+          type: 'value',
+          max: ((this.sensorPackageCount > this.actuatorPackageCount ? this.sensorPackageCount : this.actuatorPackageCount) * 1.1).toFixed(0)
+        },
+        series: [{
+          data: [this.sensorPackageCount, this.actuatorPackageCount],
+          type: 'bar',
+          itemStyle: {
+            // gradient color
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: '#5C9EFF'
+                },
+                {
+                  offset: 1,
+                  color: '#E8F2FF'
+                }
+              ],
+              global: false
+            }
+          }
+        }]
       }
       myChart.setOption(option)
     }

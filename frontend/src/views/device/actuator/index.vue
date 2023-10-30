@@ -63,6 +63,15 @@
             <!-- <div v-for="data in dataDates" :key="data.id">
               <span>{{ data }}</span>
             </div> -->
+            <div v-if="level === 2" style="color: #f56c6c" class="message">
+              {{ lastWarningOrError }}
+            </div>
+            <div v-else-if="level === 1" style="color: #e6a23c" class="message">
+              {{ lastWarningOrError }}
+            </div>
+            <div v-else style="color: #67c23a" class="message">
+              {{ lastWarningOrError }}
+            </div>
             <div class="dropdown-div">
               <el-dropdown trigger="click" @command="chooseDate = $event">
                 <span class="el-dropdown-link">
@@ -104,7 +113,9 @@ export default {
       deviceData: [],
       dataDates: new Map(),
       chooseDate: '',
-      dialogVisible: false
+      dialogVisible: false,
+      level: 0,
+      lastWarningOrError: ''
     }
   },
   computed: {
@@ -159,17 +170,52 @@ export default {
         return a.timestamp - b.timestamp
       })
       for (var i = 0; i < this.deviceData.length; i++) {
-        var date = new Date(this.deviceData[i].timestamp)
+        var timestamp = this.deviceData[i].timestamp
+        // * 1000 if timestamp is in seconds
+        if (timestamp < 1000000000000) {
+          timestamp *= 1000
+        }
+        var date = new Date(timestamp)
         var year = date.getFullYear()
         var month = date.getMonth() + 1
         var day = date.getDate()
-        var key = year + '-' + month + '-' + day
+        var key = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day)
         if (!this.dataDates.has(key)) {
           this.dataDates.set(key, [])
         }
         this.dataDates.get(key).push({
           data: this.deviceData[i].data
         })
+      }
+      var errors = this.deviceData.filter(data => data.level === 2)
+      if (errors.length > 0) {
+        timestamp = errors[errors.length - 1].timestamp
+        if (timestamp < 1000000000000) timestamp *= 1000
+        date = new Date(timestamp)
+        this.lastWarningOrError = 'Last Error: ' + '[' +
+         date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' +
+         (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' +
+         (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) +
+         ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) +
+         '] ' + errors[errors.length - 1].message
+        this.level = 2
+      } else {
+        var warnings = this.deviceData.filter(data => data.level === 1)
+        if (warnings.length > 0) {
+          timestamp = warnings[warnings.length - 1].timestamp
+          if (timestamp < 1000000000000) timestamp *= 1000
+          date = new Date(timestamp)
+          this.lastWarningOrError = 'Last Warning: ' + '[' +
+           date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' +
+           (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' +
+           (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) +
+           ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()) +
+           '] ' + warnings[warnings.length - 1].message
+          this.level = 1
+        } else {
+          this.lastWarningOrError = 'No Warning or Error'
+          this.level = 0
+        }
       }
     },
     drawChart() {
@@ -188,6 +234,12 @@ export default {
       var chart = echarts.init(document.getElementsByClassName('detail-chart')[0])
       chart.clear()
       chart.setOption({
+        title: {
+          show: false
+        },
+        legend: {
+          show: false
+        },
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
@@ -300,6 +352,12 @@ export default {
 }
 .detail-data {
   margin: 16px 0;
+  .message {
+    margin-bottom: 32px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+  }
 
   .dropdown-div {
     text-align: center;

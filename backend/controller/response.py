@@ -30,6 +30,8 @@ device_data = {
 sensor_data = {
     'sid': fields.Integer,
     'did': fields.Integer,
+    'level': fields.Integer,
+    'message': fields.String,
     'timestamp': fields.Integer,
     'data': fields.Float
 }
@@ -37,6 +39,8 @@ sensor_data = {
 actuator_data = {
     'aid': fields.Integer,
     'did': fields.Integer,
+    'level': fields.Integer,
+    'message': fields.String,
     'timestamp': fields.Integer,
     'data': fields.Boolean
 }

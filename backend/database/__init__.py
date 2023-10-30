@@ -24,12 +24,12 @@ def Initialize():
     db.session.add(Device(1, "device5", "", 1, 0, ""))
     
     # sensor data
-    db.session.add(SensorData(1, time.time(), 20))
-    db.session.add(SensorData(1, time.time() + 1, 30.01))
-    db.session.add(SensorData(1, time.time() + 2, 40.78))
+    db.session.add(SensorData(1, 0, "testinfo", time.time(), 20.01))
+    db.session.add(SensorData(1, 1, "testwarning", time.time() + 1*60*60, 30.45))
+    db.session.add(SensorData(1, 2, "testerror", time.time() + 2*60*60, 40.12))
     
     # actuator data
-    db.session.add(ActuatorData(4, time.time(), True))
-    db.session.add(ActuatorData(4, time.time() + 1, False))
+    db.session.add(ActuatorData(4, 0, "testinfo", time.time(), True))
+    db.session.add(ActuatorData(4, 0, "testinfo", time.time() + 1*60*60, False))
     
     db.session.commit()

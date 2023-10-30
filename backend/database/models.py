@@ -66,13 +66,18 @@ class Device(db.Model):
 class SensorData(db.Model):
     sdid: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
     did: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # 0: INFO, 1: WARNING, 2: ERROR
+    level: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    message: Mapped[str] = mapped_column(db.String(100), nullable=False)
     # a unix timestamp with unsigned int
     timestamp: Mapped[int] = mapped_column(db.Integer, nullable=False)
     # a float number data
     data: Mapped[float] = mapped_column(db.Float, nullable=False)
     
-    def __init__(self, did, timestamp, data):
+    def __init__(self, did, level, message, timestamp, data):
         self.did = did
+        self.level = level
+        self.message = message
         self.timestamp = timestamp
         self.data = data
     
@@ -91,13 +96,18 @@ class SensorData(db.Model):
 class ActuatorData(db.Model):
     adid: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
     did: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # 0: INFO, 1: WARNING, 2: ERROR
+    level: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    message: Mapped[str] = mapped_column(db.String(100), nullable=False)
     # a unix timestamp with unsigned int
     timestamp: Mapped[int] = mapped_column(db.Integer, nullable=False)
     # a boolean data showing whether the actuator is on or off
     data: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     
-    def __init__(self, did, timestamp, data):
+    def __init__(self, did, level, message, timestamp, data):
         self.did = did
+        self.level = level
+        self.message = message
         self.timestamp = timestamp
         self.data = data
     
