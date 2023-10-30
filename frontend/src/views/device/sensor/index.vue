@@ -29,29 +29,61 @@
       <el-dialog
         id="sensor-detail-dialog"
         title="Sensor Detail"
+        width="90%"
         :visible.sync="dialogVisible"
         :before-close="handleClose"
       >
-        <el-form :model="curDevice" label-width="80px">
-          <el-form-item label="Device ID">
-            <span>{{ curDevice.did }}</span>
-          </el-form-item>
-          <el-form-item label="Device Name">
-            <span>{{ curDevice.name }}</span>
-          </el-form-item>
-          <el-form-item label="Device Description">
-            <span>{{ curDevice.description }}</span>
-          </el-form-item>
-          <el-form-item label="Device IP">
-            <span>{{ curDevice.ip }}</span>
-          </el-form-item>
-          <el-form-item label="Device Status">
-            <span>{{ curDevice.status }}</span>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">Close</el-button>
-        </span>
+        <el-row>
+          <el-col :span="8" class="detail-head">
+            <!-- id name and photo -->
+            <div style="text-align: center" class="detail-name">
+              <span>{{ curDevice.name }}</span>
+            </div>
+            <div style="text-align: center" class="detail-photo">
+              <img src="https://cdn-icons-png.flaticon.com/512/2540/2540201.png">
+            </div>
+          </el-col>
+          <el-col :span="16">
+            <!-- other -->
+            <el-form :model="curDevice" class="detail-body">
+              <el-form-item label="Device Description">
+                <span>{{ curDevice.description }}</span>
+              </el-form-item>
+              <el-form-item label="Device IP">
+                <span>{{ curDevice.ip }}</span>
+              </el-form-item>
+              <el-form-item label="Device Status">
+                <span>{{ curDevice.status === 0 ? 'Offline' : 'Online' }}</span>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+        <el-row>
+          <div class="detail-data">
+            <!-- <div v-for="data in dataDates" :key="data.id">
+              <span>{{ data }}</span>
+            </div> -->
+            <div class="dropdown-div">
+              <el-dropdown trigger="click" @command="chooseDate = $event">
+                <span class="el-dropdown-link">
+                  {{ chooseDate || 'Choose Date' }}
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="date in dataDates.keys()" :key="date" :command="date">
+                    {{ date }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="dataDates.size === 0" disabled>
+                    No Data
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div class="chart-div">
+              <div class="detail-chart" style="width: 100%; height: 100%" />
+            </div>
+          </div>
+        </el-row>
       </el-dialog>
     </div>
   </div>
@@ -59,6 +91,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { info, data } from '@/api/device'
+import { getToken } from '@/utils/auth'
+import echarts from 'echarts'
 
 export default {
   name: 'DeviceSensor',
@@ -66,6 +101,9 @@ export default {
     return {
       sensorDevices: [],
       curDevice: {},
+      deviceData: [],
+      dataDates: new Map(),
+      chooseDate: '',
       dialogVisible: false
     }
   },
@@ -80,6 +118,12 @@ export default {
         this.setData()
       },
       deep: true
+    },
+    chooseDate: {
+      handler() {
+        this.drawChart()
+      },
+      deep: true
     }
   },
   mounted() {
@@ -90,20 +134,92 @@ export default {
       this.sensorDevices = this.devices.filter(device => device.type === 0)
     },
     openSensorDetailDialog(did) {
-      this.curDevice = this.devices.filter(device => device.did === did)[0]
-      this.dialogVisible = true
+      var token = getToken()
+      info(token, did).then(response => {
+        // console.log(response)
+        this.curDevice = response.data
+        data(token, did).then(response => {
+          // console.log(response)
+          this.deviceData = response.data
+          this.setDates()
+          this.dialogVisible = true
+        }).catch(error => {
+          // alert(error)
+          console.log(error)
+        })
+      }).catch(error => {
+        // alert(error)
+        console.log(error)
+      })
+    },
+    setDates() {
+      this.dataDates = new Map()
+      // sort
+      this.deviceData = this.deviceData.sort((a, b) => {
+        return a.timestamp - b.timestamp
+      })
+      for (var i = 0; i < this.deviceData.length; i++) {
+        var date = new Date(this.deviceData[i].timestamp)
+        var year = date.getFullYear()
+        var month = date.getMonth() + 1
+        var day = date.getDate()
+        var hour = date.getHours()
+        var minute = date.getMinutes()
+        var second = date.getSeconds()
+        var key = year + '-' + month + '-' + day
+        if (!this.dataDates.has(key)) {
+          this.dataDates.set(key, [])
+        }
+        this.dataDates.get(key).push({
+          hour: hour,
+          minute: minute,
+          second: second,
+          data: this.deviceData[i].data
+        })
+      }
+    },
+    drawChart() {
+      if (this.chooseDate === '') {
+        return
+      }
+      var data = this.dataDates.get(this.chooseDate)
+      var x = []
+      var y = []
+      for (var i = 0; i < data.length; i++) {
+        x.push(data[i].hour + ':' + data[i].minute + ':' + data[i].second)
+        y.push(data[i].data)
+      }
+      var option = {
+        xAxis: {
+          type: 'category',
+          data: x
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: y,
+          type: 'line'
+        }]
+      }
+      var chart = echarts.init(document.getElementsByClassName('detail-chart')[0])
+      chart.clear()
+      chart.setOption(option)
     },
     handleClose(done) {
-      this.$confirm('Are you sure to close this dialog?')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
+      this.dialogVisible = false
+      this.chooseDate = ''
+      this.dataDates = new Map()
+      this.curDevice = {}
+      var chart = echarts.init(document.getElementsByClassName('detail-chart')[0])
+      chart.clear()
+      done()
     }
   }
 }
 </script>
 
+<!-- card view -->
 <style lang="scss" scoped>
 
 .device-card {
@@ -151,4 +267,40 @@ export default {
   color: #67c23a; // light green
 }
 
+</style>
+
+<!-- dialog view -->
+<style lang="scss" scoped>
+.detail-head {
+  margin: 16px 0px;
+  .detail-name {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    margin: 12px 0px;
+    padding-right: 12px;
+  }
+  .detail-photo {
+    margin: 12px 0px;
+    padding-right: 12px;
+  }
+  img {
+    width: 100px;
+    height: 100px;
+  }
+}
+.detail-body {
+  margin: 16px 0;
+}
+.detail-data {
+  margin: 16px 0;
+
+  .dropdown-div {
+    text-align: center;
+  }
+  .chart-div {
+    margin: 10px 0;
+    width: 100%;
+    height: 278px;
+  }
+}
 </style>

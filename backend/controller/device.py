@@ -195,11 +195,11 @@ class DeviceData(Resource):
             if device is None:
                 return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
             if device.type == 0:
-                sensor_data = SensorData.query.filter_by(did=did).all()
-                sdata = marshal(sensor_data, sensor_data)
+                sensors = SensorData.query.filter_by(did=did).all()
+                sdata = marshal(sensors, sensor_data)
                 return BasicResponse(HTTPStatus.OK, "get sensor data success", sdata, token)
             elif device.type == 1:
-                actuator_data = ActuatorData.query.filter_by(did=did).all()
-                adata = marshal(actuator_data, actuator_data)
+                actuators = ActuatorData.query.filter_by(did=did).all()
+                adata = marshal(actuators, actuator_data)
                 return BasicResponse(HTTPStatus.OK, "get actuator data success", adata, token)
             return BasicResponse(HTTPStatus.BAD_REQUEST, "device type error", None)

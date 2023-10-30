@@ -25,11 +25,11 @@ def Initialize():
     
     # sensor data
     db.session.add(SensorData(1, time.time(), 20))
-    db.session.add(SensorData(1, time.time(), 30.01))
-    db.session.add(SensorData(1, time.time(), 40.78))
+    db.session.add(SensorData(1, time.time() + 1, 30.01))
+    db.session.add(SensorData(1, time.time() + 2, 40.78))
     
     # actuator data
     db.session.add(ActuatorData(4, time.time(), True))
-    db.session.add(ActuatorData(4, time.time(), False))
+    db.session.add(ActuatorData(4, time.time() + 1, False))
     
     db.session.commit()
