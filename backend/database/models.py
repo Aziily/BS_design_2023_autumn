@@ -62,3 +62,53 @@ class Device(db.Model):
     
     def __hash__(self):
         return hash(self.did)
+    
+class SensorData(db.Model):
+    sdid: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
+    did: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # a unix timestamp with unsigned int
+    timestamp: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # a float number data
+    data: Mapped[float] = mapped_column(db.Float, nullable=False)
+    
+    def __init__(self, did, timestamp, data):
+        self.did = did
+        self.timestamp = timestamp
+        self.data = data
+    
+    def __repr__(self):
+        return '<SensorData %r>' % self.sdid
+    
+    def __str__(self):
+        return self.sdid
+    
+    def __eq__(self, other):
+        return self.sdid == other.sdid
+    
+    def __hash__(self):
+        return hash(self.sdid)
+    
+class ActuatorData(db.Model):
+    adid: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
+    did: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # a unix timestamp with unsigned int
+    timestamp: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    # a boolean data showing whether the actuator is on or off
+    data: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
+    
+    def __init__(self, did, timestamp, data):
+        self.did = did
+        self.timestamp = timestamp
+        self.data = data
+    
+    def __repr__(self):
+        return '<ActuatorData %r>' % self.adid
+    
+    def __str__(self):
+        return self.adid
+    
+    def __eq__(self, other):
+        return self.adid == other.adid
+    
+    def __hash__(self):
+        return hash(self.adid)

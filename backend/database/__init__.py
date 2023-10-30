@@ -1,3 +1,4 @@
+import time
 import flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -21,5 +22,14 @@ def Initialize():
     db.session.add(Device(1, "device3", "asdiuhasdiuhaisdhaioshdoasfcbuiasdgopiasgdiuassbsbgduias", 0, 1, ""))
     db.session.add(Device(1, "device4", "", 1, 1, ""))
     db.session.add(Device(1, "device5", "", 1, 0, ""))
+    
+    # sensor data
+    db.session.add(SensorData(1, time.time(), 20))
+    db.session.add(SensorData(1, time.time(), 30.01))
+    db.session.add(SensorData(1, time.time(), 40.78))
+    
+    # actuator data
+    db.session.add(ActuatorData(4, time.time(), True))
+    db.session.add(ActuatorData(4, time.time(), False))
     
     db.session.commit()

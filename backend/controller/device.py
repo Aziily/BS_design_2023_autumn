@@ -175,3 +175,31 @@ class DeviceDelete(Resource):
             db.session.commit()
             ddata = marshal(device, device_data)
             return BasicResponse(HTTPStatus.OK, "delete device success", ddata, token)
+
+class DeviceData(Resource):
+    @marshal_with(basic_response)
+    @jwt_required()
+    def get(self, did):
+        token = request.headers.get('Authorization')
+        if token is None:
+            return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
+        else:
+            username = get_jwt_identity()
+            user = User.query.filter_by(username=username).first()
+            if user is None:
+                return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
+            if user.role == 0:
+                device = Device.query.filter_by(did=did).first()
+            else:
+                device = Device.query.filter_by(did=did, uid=user.uid).first()
+            if device is None:
+                return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
+            if device.type == 0:
+                sensor_data = SensorData.query.filter_by(did=did).all()
+                sdata = marshal(sensor_data, sensor_data)
+                return BasicResponse(HTTPStatus.OK, "get sensor data success", sdata, token)
+            elif device.type == 1:
+                actuator_data = ActuatorData.query.filter_by(did=did).all()
+                adata = marshal(actuator_data, actuator_data)
+                return BasicResponse(HTTPStatus.OK, "get actuator data success", adata, token)
+            return BasicResponse(HTTPStatus.BAD_REQUEST, "device type error", None)

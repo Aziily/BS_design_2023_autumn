@@ -27,6 +27,20 @@ device_data = {
     'ip': fields.String
 }
 
+sensor_data = {
+    'sid': fields.Integer,
+    'did': fields.Integer,
+    'timestamp': fields.Integer,
+    'data': fields.Float
+}
+
+actuator_data = {
+    'aid': fields.Integer,
+    'did': fields.Integer,
+    'timestamp': fields.Integer,
+    'data': fields.Boolean
+}
+
 class BasicResponse:
     def __init__(self, code, message, data, token=None):
         self.code = code
@@ -53,3 +67,17 @@ class Devicedata:
         self.type = type
         self.status = status
         self.ip = ip
+
+class Sensordata:
+    def __init__(self, sid, did, timestamp, data):
+        self.sid = sid
+        self.did = did
+        self.timestamp = timestamp
+        self.data = data
+        
+class Actuatordata:
+    def __init__(self, aid, did, timestamp, data):
+        self.aid = aid
+        self.did = did
+        self.timestamp = timestamp
+        self.data = data

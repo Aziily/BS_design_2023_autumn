@@ -2,6 +2,7 @@ from exts import api
 
 from controller.user import *
 from controller.device import *
+from controller.data import *
 
 def Initialize():
     # use '/api' as prefix
@@ -21,3 +22,8 @@ def Initialize():
     api.add_resource(DeviceDelete, '/device/delete/<int:did>')
     api.add_resource(DeviceUpdate, '/device/update/<int:did>')
     api.add_resource(DeviceInfo, '/device/info/<int:did>')
+    api.add_resource(DeviceData, '/device/data/<int:did>')
+    
+    # /data
+    api.add_resource(SensorDataAdd, '/data/sensor/add')
+    api.add_resource(ActuatorDataAdd, '/data/actuator/add')
