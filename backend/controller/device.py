@@ -46,11 +46,12 @@ class DeviceAdd(Resource):
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
             parser = reqparse.RequestParser()
             parser.add_argument('name', type=str, required=True)
-            parser.add_argument('description', type=str, required=False)
+            parser.add_argument('description', type=str, required=True)
             parser.add_argument('type', type=int, required=True)
             parser.add_argument('status', type=int, required=True)
             parser.add_argument('ip', type=str, required=True)
-            args = parser.parse_args(strict=True)
+            args = parser.parse_args(strict=False)
+            # print(args)
             
             name = args['name']
             description = args['description']
@@ -124,10 +125,10 @@ class DeviceUpdate(Resource):
             parser = reqparse.RequestParser()
             parser.add_argument('name', type=str, required=False)
             parser.add_argument('description', type=str, required=False)
-            parser.add_argument('type', type=int, required=False)
+            # parser.add_argument('type', type=int, required=False)
             parser.add_argument('status', type=int, required=False)
             parser.add_argument('ip', type=str, required=False)
-            args = parser.parse_args(strict=True)
+            args = parser.parse_args(strict=False)
             
             if args['name'] is not None: 
                 if len(args['name']) > 20:
@@ -137,10 +138,6 @@ class DeviceUpdate(Resource):
                 if len(args['description']) > 100:
                     return BasicResponse(HTTPStatus.BAD_REQUEST, "device description too long", None)
                 device.description = args['description']
-            if args['type'] is not None: 
-                if args['type'] != 0 and args['type'] != 1:
-                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device type error", None)
-                device.type = args['type']
             if args['status'] is not None: 
                 if args['status'] != 0 and args['status'] != 1:
                     return BasicResponse(HTTPStatus.BAD_REQUEST, "device status error", None)

@@ -32,7 +32,7 @@ class UserLogin(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
-        args = parser.parse_args(strict=True)
+        args = parser.parse_args(strict=False)
         print(args)
         
         username = args['username']
@@ -67,7 +67,7 @@ class UserRegister(Resource):
         parser.add_argument('password', type=str, required=True)
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('phone', type=str, required=False)
-        args = parser.parse_args(strict=True)
+        args = parser.parse_args(strict=False)
         
         username = args['username']
         password = args['password']
@@ -81,8 +81,9 @@ class UserRegister(Resource):
         if not checkEmail(email):
             return BasicResponse(HTTPStatus.BAD_REQUEST, "email format error", None)
         user = User.query.filter_by(username=username).first()
+        user_email = User.query.filter_by(email=email).first()
         
-        if user is None:
+        if user is None and user_email is None:
             user = User(username, password, email, phone, 1)
             udata = marshal(user, user_data)
             db.session.add(user)
@@ -111,7 +112,7 @@ class UserUpdate(Resource):
         parser.add_argument('password', type=str, required=False)
         parser.add_argument('email', type=str, required=False)
         parser.add_argument('phone', type=str, required=False)
-        args = parser.parse_args(strict=True)
+        args = parser.parse_args(strict=False)
                 
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()

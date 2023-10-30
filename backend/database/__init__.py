@@ -17,11 +17,11 @@ def Initialize():
     db.session.add(User("user", "user123", "user@example.com", "", 1))
     
     # device
-    db.session.add(Device(1, "device1", "hello", 0, 0, ""))
-    db.session.add(Device(1, "device2", "test", 0, 0, ""))
-    db.session.add(Device(1, "device3", "asdiuhasdiuhaisdhaioshdoasfcbuiasdgopiasgdiuassbsbgduias", 0, 1, ""))
-    db.session.add(Device(1, "device4", "", 1, 1, ""))
-    db.session.add(Device(1, "device5", "", 1, 0, ""))
+    db.session.add(Device(1, "device1", "hello", 0, 0, "10.0.0.1"))
+    db.session.add(Device(1, "device2", "test", 0, 0, "10.0.0.2"))
+    db.session.add(Device(1, "device3", "asdiuhasdiuhaisdhaioshdoasfcbuiasdgopiasgdiuassbsbgduias", 0, 1, "10.0.0.3"))
+    db.session.add(Device(1, "device4", "", 1, 1, "192.168.255.255"))
+    db.session.add(Device(1, "device5", "", 1, 0, "192.168.255.254"))
     
     # sensor data
     db.session.add(SensorData(1, 0, "testinfo", time.time(), 20.01))

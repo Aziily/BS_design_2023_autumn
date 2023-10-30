@@ -19,7 +19,7 @@ class SensorDataAdd(Resource):
         parser.add_argument('message', type=str, required=True)
         parser.add_argument('timestamp', type=int, required=True)
         parser.add_argument('data', type=float, required=True)
-        args = parser.parse_args(strict=True)
+        args = parser.parse_args(strict=False)
         
         ip = request.remote_addr
         if not checkIPV4(ip):
@@ -48,7 +48,7 @@ class ActuatorDataAdd(Resource):
         parser.add_argument('message', type=str, required=True)
         parser.add_argument('timestamp', type=int, required=True)
         parser.add_argument('data', type=bool, required=True)
-        args = parser.parse_args(strict=True)
+        args = parser.parse_args(strict=False)
         
         ip = request.remote_addr
         if not checkIPV4(ip):

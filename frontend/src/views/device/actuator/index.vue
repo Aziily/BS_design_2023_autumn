@@ -1,12 +1,17 @@
 <template>
   <!-- one card for each device -->
   <div class="device-actuator-container">
+    <el-row class="device-button">
+      <el-button type="primary" @click="$router.push({name: 'DeviceAdd', params: {type: 'actuator'}})">Add</el-button>
+    </el-row>
     <el-row>
       <el-col v-for="device in actuatorDevices" :key="device.id" :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
         <el-card shadow="hover" class="device-card">
           <span class="device-id">{{ device.did }}</span>
           <span class="device-name">{{ device.name }}</span>
           <el-button class="device-full" style="float: right; padding: 3px 0" type="text" icon="el-icon-full-screen" size="mini" @click="openActuatorDetailDialog(device.did)" />
+          <el-button class="device-delete" style="float: right; padding: 3px 0" type="text" icon="el-icon-delete" size="mini" @click="deleteDevice(device.did)" />
+          <el-button class="device-edit" style="float: right; padding: 3px 0" type="text" icon="el-icon-edit" size="mini" @click="$router.push({name: 'DeviceEdit', params: {device: device}})" />
           <div class="device-description">
             <el-collapse>
               <el-collapse-item title="Description" name="1">
@@ -100,7 +105,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { info, data } from '@/api/device'
+import { info, data, remove } from '@/api/device'
 import { getToken } from '@/utils/auth'
 import echarts from 'echarts'
 
@@ -143,6 +148,30 @@ export default {
   methods: {
     setData() {
       this.actuatorDevices = this.devices.filter(device => device.type === 1)
+    },
+    deleteDevice(did) {
+      this.$confirm('Are you sure to delete this device?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        var token = getToken()
+        remove(token, did).then(() => {
+          this.$message({
+            type: 'success',
+            message: 'Delete device successfully'
+          })
+          this.$store.dispatch('device/list')
+        }).catch(error => {
+          // alert(error)
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Delete device canceled'
+        })
+      })
     },
     openActuatorDetailDialog(did) {
       var token = getToken()
@@ -280,6 +309,9 @@ export default {
 
 <!-- card view -->
 <style lang="scss" scoped>
+.device-button {
+  margin: 12px;
+}
 
 .device-card {
   padding: 10px;
@@ -303,6 +335,15 @@ export default {
 }
 .device-full {
   margin-right: 8px;
+  margin-left: 4px
+}
+.device-delete {
+  margin-right: 4px;
+  margin-left: 4px;
+}
+.device-edit {
+  margin-right: 4px;
+  margin-left: 4px;
 }
 .device-description {
   // grey font

@@ -18,3 +18,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.dashboard-container {
+  background-color: rgb(240, 242, 245);
+}
+</style>

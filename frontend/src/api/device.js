@@ -23,3 +23,29 @@ export function data(token, did) {
     params: { token }
   })
 }
+
+export function add(token, data) {
+  return request({
+    url: '/device/add',
+    method: 'post',
+    params: { token },
+    data
+  })
+}
+
+export function update(token, data, did) {
+  return request({
+    url: '/device/update' + '/' + did,
+    method: 'post',
+    params: { token },
+    data
+  })
+}
+
+export function remove(token, did) {
+  return request({
+    url: '/device/delete' + '/' + did,
+    method: 'post',
+    params: { token }
+  })
+}
