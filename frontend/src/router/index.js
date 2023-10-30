@@ -93,6 +93,20 @@ export const constantRoutes = [
   },
 
   {
+    path: '/message',
+    name: 'Message',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'MessageIndex',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'el-icon-message' }
+      }
+    ]
+  },
+
+  {
     path: 'external-link',
     component: Layout,
     children: [

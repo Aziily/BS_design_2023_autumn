@@ -25,5 +25,6 @@ def Initialize():
     api.add_resource(DeviceData, '/device/data/<int:did>')
     
     # /data
+    api.add_resource(DataList, '/data/list')
     api.add_resource(SensorDataAdd, '/data/sensor/add')
     api.add_resource(ActuatorDataAdd, '/data/actuator/add')

@@ -49,3 +49,12 @@ export function remove(token, did) {
     params: { token }
   })
 }
+
+export function dataList(token, data) {
+  return request({
+    url: '/device/dataList',
+    method: 'get',
+    params: { token },
+    data
+  })
+}
