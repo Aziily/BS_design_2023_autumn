@@ -78,13 +78,13 @@
       </el-table>
       <div class="pagination">
         <el-pagination
-          @current-change="curPage = $event - 1"
           :current-page="curPage + 1"
           :page-size="20"
           layout="prev, pager, next"
-          :total="messageList.length">
-        </el-pagination>
-      </div> 
+          :total="messageList.length"
+          @current-change="curPage = $event - 1"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -97,28 +97,21 @@ export default {
   name: 'Message',
   data() {
     return {
-        query: {
-          type: '-',
-          year: '-',
-          month: '-',
-          day: '-',
-          level: '-'
-        },
-        sensorMessages: [],
-        actuatorMessages: [],
-        messageList: [],
-        years: [],
-        months: [],
-        days: [],
-        curPage: 0
-      }
-  },
-  mounted() {
-    getDataYear().then(response => {
-      this.years = response.data
-    }).catch(error => {
-      console.log(error)
-    })
+      query: {
+        type: '-',
+        year: '-',
+        month: '-',
+        day: '-',
+        level: '-'
+      },
+      sensorMessages: [],
+      actuatorMessages: [],
+      messageList: [],
+      years: [],
+      months: [],
+      days: [],
+      curPage: 0
+    }
   },
   watch: {
     query: {
@@ -130,8 +123,7 @@ export default {
           this.query.month = '-'
           this.query.day = '-'
         } else {
-          this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9,
-                         10, 11, 12]
+          this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
           if (val.month === '-') {
             this.days = []
             this.query.day = '-'
@@ -148,6 +140,13 @@ export default {
       },
       deep: true
     }
+  },
+  mounted() {
+    getDataYear().then(response => {
+      this.years = response.data
+    }).catch(error => {
+      console.log(error)
+    })
   },
   methods: {
     mapSensor(sensorMessage) {

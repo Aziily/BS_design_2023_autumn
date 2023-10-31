@@ -56,6 +56,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/map',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Map',
+        component: () => import('@/views/map/index'),
+        meta: { title: 'Map', icon: 'el-icon-map-location' }
+      }
+    ]
+  },
+
+  {
     path: '/device',
     component: Layout,
     redirect: '/device/kind',

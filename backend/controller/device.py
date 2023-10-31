@@ -46,10 +46,12 @@ class DeviceAdd(Resource):
                 return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
             parser = reqparse.RequestParser()
             parser.add_argument('name', type=str, required=True)
-            parser.add_argument('description', type=str, required=True)
+            parser.add_argument('description', type=str, required=False)
             parser.add_argument('type', type=int, required=True)
             parser.add_argument('status', type=int, required=True)
             parser.add_argument('ip', type=str, required=True)
+            parser.add_argument('longitude', type=float, required=False)
+            parser.add_argument('latitude', type=float, required=False)
             args = parser.parse_args(strict=False)
             # print(args)
             
@@ -58,6 +60,8 @@ class DeviceAdd(Resource):
             type = args['type']
             status = args['status']
             ip = args['ip']
+            longitude = args['longitude']
+            latitude = args['latitude']
             
             if len(name) > 20:
                 return BasicResponse(HTTPStatus.BAD_REQUEST, "device name too long", None)
@@ -69,6 +73,10 @@ class DeviceAdd(Resource):
                 return BasicResponse(HTTPStatus.BAD_REQUEST, "device status error", None)
             if not checkIPV4(ip):
                 return BasicResponse(HTTPStatus.BAD_REQUEST, "device ip format error", None)
+            if longitude is not None and (longitude < -180 or longitude > 180):
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device longitude error", None)
+            if latitude is not None and (latitude < -90 or latitude > 90):
+                return BasicResponse(HTTPStatus.BAD_REQUEST, "device latitude error", None)
             
             device = Device(
                 uid=user.uid,
@@ -76,7 +84,9 @@ class DeviceAdd(Resource):
                 description=description,
                 type=type,
                 status=status,
-                ip=ip
+                ip=ip,
+                longitude=longitude,
+                latitude=latitude
             )
             db.session.add(device)
             db.session.commit()
@@ -128,6 +138,8 @@ class DeviceUpdate(Resource):
             # parser.add_argument('type', type=int, required=False)
             parser.add_argument('status', type=int, required=False)
             parser.add_argument('ip', type=str, required=False)
+            parser.add_argument('longitude', type=float, required=False)
+            parser.add_argument('latitude', type=float, required=False)
             args = parser.parse_args(strict=False)
             
             if args['name'] is not None: 
@@ -146,6 +158,15 @@ class DeviceUpdate(Resource):
                 if not checkIPV4(args['ip']):
                     return BasicResponse(HTTPStatus.BAD_REQUEST, "device ip format error", None)
                 device.ip = args['ip']
+            if args['longitude'] is not None:
+                if args['longitude'] < -180 or args['longitude'] > 180:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device longitude error", None)
+                device.longitude = args['longitude']
+            if args['latitude'] is not None:
+                if args['latitude'] < -90 or args['latitude'] > 90:
+                    return BasicResponse(HTTPStatus.BAD_REQUEST, "device latitude error", None)
+                device.latitude = args['latitude']
+            
             db.session.commit()
             ddata = marshal(device, device_data)
             return BasicResponse(HTTPStatus.OK, "update device success", ddata, token)

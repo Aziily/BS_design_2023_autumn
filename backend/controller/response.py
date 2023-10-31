@@ -24,7 +24,9 @@ device_data = {
     'description': fields.String,
     'type': fields.Integer,
     'status': fields.Integer,
-    'ip': fields.String
+    'ip': fields.String,
+    'longitude': fields.Float,
+    'latitude': fields.Float
 }
 
 sensor_data = {
@@ -63,7 +65,7 @@ class Userdata:
         self.last_ip = last_ip
     
 class Devicedata:
-    def __init__(self, did, uid, name, description, type, status, ip):
+    def __init__(self, did, uid, name, description, type, status, ip, longitude, latitude):
         self.did = did
         self.uid = uid
         self.name = name
@@ -71,7 +73,9 @@ class Devicedata:
         self.type = type
         self.status = status
         self.ip = ip
-
+        self.longitude = longitude
+        self.latitude = latitude
+        
 class Sensordata:
     def __init__(self, sid, did, timestamp, data):
         self.sid = sid

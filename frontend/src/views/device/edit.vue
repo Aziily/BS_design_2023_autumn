@@ -20,6 +20,10 @@
             <el-radio label="1">Online</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="Device Location">
+          <br>
+          <address-map :origincenter="FormData.center" @update:center="getCenter" />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="editDevice">Edit</el-button>
         </el-form-item>
@@ -31,9 +35,13 @@
 <script>
 import { update } from '@/api/device'
 import { getToken } from '@/utils/auth'
+import AddressMap from '@/views/device/components/AddressMap'
 
 export default {
   name: 'EditDevice',
+  components: {
+    AddressMap
+  },
   data() {
     var checkIP = (rule, value, callback) => {
       if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(value)) {
@@ -62,7 +70,8 @@ export default {
         name: this.$route.params.device ? this.$route.params.device.name : '',
         description: this.$route.params.device ? this.$route.params.device.description : '',
         ip: this.$route.params.device ? this.$route.params.device.ip : '',
-        status: this.$route.params.device ? (this.$route.params.device.status === 0 ? '0' : '1') : '0'
+        status: this.$route.params.device ? (this.$route.params.device.status === 0 ? '0' : '1') : '0',
+        center: this.$route.params.device ? [this.$route.params.device.longitude, this.$route.params.device.latitude] : null
       },
       did: this.$route.params.device ? this.$route.params.device.did : null
     }
@@ -71,8 +80,14 @@ export default {
     if (!this.$route.params.device) {
       this.$router.go(-1)
     }
+    console.log(this.$route.params.device)
+    console.log(this.FormData.center)
   },
   methods: {
+    getCenter(center) {
+      // console.log(center)
+      this.FormData.center = center
+    },
     editDevice() {
       if (this.did === null) {
         this.$message.error('Invalid device')
@@ -86,7 +101,9 @@ export default {
             name: this.FormData.name === '' ? null : this.FormData.name,
             description: this.FormData.description === '' ? null : this.FormData.description,
             ip: this.FormData.ip,
-            status: this.FormData.status === '0' ? 0 : 1
+            status: this.FormData.status === '0' ? 0 : 1,
+            longitude: this.FormData.center ? this.FormData.center[0] : null,
+            latitude: this.FormData.center ? this.FormData.center[1] : null
           }
           update(getToken(), data, this.did).then(response => {
             this.$message({

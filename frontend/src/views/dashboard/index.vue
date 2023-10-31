@@ -15,6 +15,13 @@ export default {
     return {
       currentRole: 'adminDashboard'
     }
+  },
+  mounted() {
+    this.$store.dispatch('user/getInfo').then(res => {
+      this.$store.dispatch('device/list').then(res => {
+        return
+      })
+    })
   }
 }
 </script>

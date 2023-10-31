@@ -1,0 +1,1 @@
+export const MapKey = 'Your Gaode Map Key'

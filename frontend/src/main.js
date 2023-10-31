@@ -33,6 +33,21 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
+import VueAMap from '@vuemap/vue-amap'
+import '@vuemap/vue-amap/dist/style.css'
+import { MapKey } from '@/config'
+
+Vue.use(VueAMap)
+VueAMap.initAMapApiLoader({
+  key: MapKey,
+  plugin: [
+    'AMap.Geolocation',
+    'AMap.Geocoder'
+  ],
+  v: '1.4.4',
+  uiVersion: '1.0.11'
+})
+
 Vue.config.productionTip = false
 
 new Vue({

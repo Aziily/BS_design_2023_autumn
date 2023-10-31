@@ -27,6 +27,10 @@
             <el-radio label="1">Online</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="Device Location">
+          <br>
+          <address-map :origincenter="FormData.center" @update:center="getCenter" />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="addDevice">Add</el-button>
         </el-form-item>
@@ -38,9 +42,13 @@
 <script>
 import { add } from '@/api/device'
 import { getToken } from '@/utils/auth'
+import AddressMap from '@/views/device/components/AddressMap'
 
 export default {
   name: 'AddDevice',
+  components: {
+    AddressMap
+  },
   data() {
     var checkIP = (rule, value, callback) => {
       if (value === '') {
@@ -77,15 +85,21 @@ export default {
         description: '',
         ip: '',
         type: this.$route.params.type ? this.$route.params.type : 'sensor',
-        status: '0'
+        status: '0',
+        center: null
       }
     }
   },
-  mounted() {
-    console.log(this.FormData.type)
-  },
+  // mounted() {
+  //   console.log(this.FormData.type)
+  // },
   methods: {
+    getCenter(center) {
+      // console.log(center)
+      this.FormData.center = center
+    },
     addDevice() {
+      // console.log(this.FormData)
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           // console.log(this.FormData)
@@ -94,7 +108,9 @@ export default {
             description: this.FormData.description === '' ? null : this.FormData.description,
             type: this.FormData.type === 'sensor' ? 0 : 1,
             ip: this.FormData.ip,
-            status: this.FormData.status === '0' ? 0 : 1
+            status: this.FormData.status === '0' ? 0 : 1,
+            longitude: this.FormData.center ? this.FormData.center[0] : null,
+            latitude: this.FormData.center ? this.FormData.center[1] : null
           }
           add(getToken(), data).then(response => {
             this.$message({
