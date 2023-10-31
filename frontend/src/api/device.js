@@ -53,8 +53,15 @@ export function remove(token, did) {
 export function dataList(token, data) {
   return request({
     url: '/device/dataList',
-    method: 'get',
+    method: 'post',
     params: { token },
     data
+  })
+}
+
+export function getDataYear() {
+  return request({
+    url: '/device/dataYearList',
+    method: 'get'
   })
 }

@@ -6,7 +6,7 @@
         <div slot="header" class="card-head">
           <span>Message</span>
         </div>
-        <el-form ref="query" :model="query" :rules="queryRules" label-width="100px" class="demo-ruleForm">
+        <el-form ref="query" :model="query" label-width="100px" class="demo-ruleForm">
           <div>
             <el-form-item label="Type" prop="type" width="40vw">
               <el-select v-model="query.type" placeholder="Please select message type">
@@ -46,43 +46,95 @@
     </div>
 
     <div class="message-list">
-      <span v-for="message in messageList" :key="message.id">message</span>
+      <el-table :data="messageList.slice(curPage * 20, (curPage + 1) * 20)" border style="width: 100%">
+        <el-table-column prop="did" label="Device ID" width="85" />
+        <el-table-column prop="type" label="Type" width="80" />
+        <el-table-column prop="time" label="Time" width="160" />
+        <el-table-column prop="level" label="Level" width="90">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.level === 'error' ? 'danger' : scope.row.level">{{ scope.row.level }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="message" label="Message">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <p>{{ scope.row.message }}</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.message }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column prop="data" label="Data" width="100">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <p>{{ scope.row.data }}</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.data }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          @current-change="curPage = $event - 1"
+          :current-page="curPage + 1"
+          :page-size="20"
+          layout="prev, pager, next"
+          :total="messageList.length">
+        </el-pagination>
+      </div> 
     </div>
   </div>
 </template>
 
 <script>
-import { dataList } from '@/api/device'
+import { dataList, getDataYear } from '@/api/device'
 import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Message',
   data() {
     return {
-      query: {
-        type: '-',
-        year: '-',
-        month: '-',
-        day: '-',
-        level: '-'
-      },
-      sensorMessages: [],
-      actuatorMessages: [],
-      messageList: [],
-      years: [2020, 2021, 2022, 2023],
-      months: [],
-      days: []
-    }
+        query: {
+          type: '-',
+          year: '-',
+          month: '-',
+          day: '-',
+          level: '-'
+        },
+        sensorMessages: [],
+        actuatorMessages: [],
+        messageList: [],
+        years: [],
+        months: [],
+        days: [],
+        curPage: 0
+      }
+  },
+  mounted() {
+    getDataYear().then(response => {
+      this.years = response.data
+    }).catch(error => {
+      console.log(error)
+    })
   },
   watch: {
     query: {
       handler: function(val, oldVal) {
+        console.log(val)
         if (val.year === '-') {
           this.months = []
           this.days = []
+          this.query.month = '-'
+          this.query.day = '-'
         } else {
+          this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9,
+                         10, 11, 12]
           if (val.month === '-') {
             this.days = []
+            this.query.day = '-'
           } else {
             var year = parseInt(val.year)
             var month = parseInt(val.month)
@@ -98,8 +150,58 @@ export default {
     }
   },
   methods: {
+    mapSensor(sensorMessage) {
+      var timestamp = sensorMessage.timestamp
+      if (timestamp.toString().length === 10) {
+        timestamp = timestamp * 1000
+      }
+      var date = new Date(timestamp)
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      var hour = date.getHours()
+      var minute = date.getMinutes()
+      var second = date.getSeconds()
+      var time = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second
+      var level = sensorMessage.level === 0 ? 'info' : (sensorMessage.level === 1 ? 'warning' : 'error')
+      return {
+        id: 'sensor-' + sensorMessage.sdid.toString() + '-' + timestamp.toString(),
+        did: sensorMessage.did.toString(),
+        type: 'sensor',
+        timestamp: timestamp,
+        time: time,
+        level: level,
+        message: sensorMessage.message,
+        data: sensorMessage.data
+      }
+    },
+    mapActuator(actuatorMessage) {
+      var timestamp = actuatorMessage.timestamp
+      if (timestamp.toString().length === 10) {
+        timestamp = timestamp * 1000
+      }
+      var date = new Date(timestamp)
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      var hour = date.getHours()
+      var minute = date.getMinutes()
+      var second = date.getSeconds()
+      var time = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second
+      var level = actuatorMessage.level === 0 ? 'info' : (actuatorMessage.level === 1 ? 'warning' : 'error')
+      return {
+        id: 'actuator-' + actuatorMessage.adid.toString() + '-' + timestamp.toString(),
+        did: actuatorMessage.did.toString(),
+        type: 'actuator',
+        timestamp: timestamp,
+        time: time,
+        level: level,
+        message: actuatorMessage.message,
+        data: actuatorMessage.data ? 'on' : 'off'
+      }
+    },
     queryMessage() {
-      console.log(this.query)
+      // console.log(this.query)
       var data = {}
       if (this.query.type !== '-') {
         data.type = this.query.type === 'sensor' ? 0 : 1
@@ -117,13 +219,13 @@ export default {
         data.level = this.query.level === 'info' ? 0 : (this.query.level === 'warning' ? 1 : 2)
       }
       dataList(getToken(), data).then(response => {
-        console.log(response)
-        var { sensors, actuators } = response.data
-        this.sensorMessages = sensors
-        this.actuatorMessages = actuators
-        this.messageList = sensors.concat(actuators).sort((a, b) => {
-          return b.timestamp - a.timestamp
+        console.log(response.data.actuator)
+        this.sensorMessages = response.data.sensor ? response.data.sensor.map(this.mapSensor) : []
+        this.actuatorMessages = response.data.actuator ? response.data.actuator.map(this.mapActuator) : []
+        this.messageList = this.sensorMessages.concat(this.actuatorMessages).sort((a, b) => {
+          return a.timestamp - b.timestamp
         })
+        this.curPage = 0
       }).catch(error => {
         console.log(error)
       })
@@ -131,3 +233,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.message-container {
+  .message-list {
+    margin: 32px;
+    .pagination {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+</style>

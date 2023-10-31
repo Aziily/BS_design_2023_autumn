@@ -27,9 +27,15 @@ def Initialize():
     db.session.add(SensorData(1, 0, "testinfo", time.time(), 20.01))
     db.session.add(SensorData(1, 1, "testwarning", time.time() + 1*60*60, 30.45))
     db.session.add(SensorData(1, 2, "testerror", time.time() + 2*60*60, 40.12))
+    db.session.add(SensorData(2, 0, "testinfo", time.mktime(time.strptime("2020-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")), 20.01))
+    db.session.add(SensorData(2, 1, "testwarning", time.mktime(time.strptime("2020-6-28 23:59:59", "%Y-%m-%d %H:%M:%S")), 30.45))
+    db.session.add(SensorData(2, 2, "testerror", time.mktime(time.strptime("2020-1-7 23:59:59", "%Y-%m-%d %H:%M:%S")), 40.12))
+    db.session.add(SensorData(3, 0, "testinfo", time.mktime(time.strptime("2002-12-8 23:59:59", "%Y-%m-%d %H:%M:%S")), 20.01))
     
     # actuator data
-    db.session.add(ActuatorData(4, 0, "testinfo", time.time(), True))
-    db.session.add(ActuatorData(4, 0, "testinfo", time.time() + 1*60*60, False))
+    db.session.add(ActuatorData(5, 0, "testinfo", time.time(), True))
+    db.session.add(ActuatorData(5, 0, "testinfo", time.time() + 1*60*60, False))
+    for i in range(100):
+        db.session.add(ActuatorData(5, 0, "testinfo", time.time() + i*60*60, bool(i%2)))
     
     db.session.commit()

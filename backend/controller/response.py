@@ -28,7 +28,7 @@ device_data = {
 }
 
 sensor_data = {
-    'sid': fields.Integer,
+    'sdid': fields.Integer,
     'did': fields.Integer,
     'level': fields.Integer,
     'message': fields.String,
@@ -37,7 +37,7 @@ sensor_data = {
 }
 
 actuator_data = {
-    'aid': fields.Integer,
+    'adid': fields.Integer,
     'did': fields.Integer,
     'level': fields.Integer,
     'message': fields.String,

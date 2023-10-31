@@ -1,5 +1,7 @@
+from math import e
 from os import access
 import time
+from tracemalloc import start
 from exts import db, api, jwt
 
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
@@ -11,68 +13,28 @@ from controller.response import *
 from database.models import *
 from utils import checkIPV4
 
-class SensorDataAdd(Resource):
+class DataYearList(Resource):
     @marshal_with(basic_response)
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('level', type=int, required=True)
-        parser.add_argument('message', type=str, required=True)
-        parser.add_argument('timestamp', type=int, required=True)
-        parser.add_argument('data', type=float, required=True)
-        args = parser.parse_args(strict=False)
-        
-        ip = request.remote_addr
-        if not checkIPV4(ip):
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid ip address", None)
-        device = Device.query.filter_by(ip=ip, type=0).first()
-        if device is None:
-            return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
-        timestamp = args['timestamp']
-        data = args['data']
-        if args['level'] not in [0, 1, 2]:
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid level", None)
-        level = args['level']
-        if args['message'] is None or len(args['message']) > 100:
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid message", None)
-        message = args['message']
-        sensor_data = SensorData(device.did, level, message, timestamp, data)
-        db.session.add(sensor_data)
-        db.session.commit()
-        return BasicResponse(HTTPStatus.OK, "add sensor data success", None)
-    
-class ActuatorDataAdd(Resource):
-    @marshal_with(basic_response)
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('level', type=int, required=True)
-        parser.add_argument('message', type=str, required=True)
-        parser.add_argument('timestamp', type=int, required=True)
-        parser.add_argument('data', type=bool, required=True)
-        args = parser.parse_args(strict=False)
-        
-        ip = request.remote_addr
-        if not checkIPV4(ip):
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid ip address", None)
-        device = Device.query.filter_by(ip=ip, type=1).first()
-        if device is None:
-            return BasicResponse(HTTPStatus.NOT_FOUND, "device not found", None)
-        timestamp = args['timestamp']
-        data = args['data']
-        if args['level'] not in [0, 1, 2]:
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid level", None)
-        level = args['level']
-        if args['message'] is None or len(args['message']) > 100:
-            return BasicResponse(HTTPStatus.BAD_REQUEST, "invalid message", None)
-        message = args['message']
-        actuator_data = ActuatorData(device.did, level, message, timestamp, data)
-        db.session.add(actuator_data)
-        db.session.commit()
-        return BasicResponse(HTTPStatus.OK, "add actuator data success", None)
-    
+    def get(self):
+        sensor_datas = SensorData.query.all()
+        actuator_datas = ActuatorData.query.all()
+        # get year list from timestamp
+        year_list = []
+        for sensor_data in sensor_datas:
+            year = time.localtime(sensor_data.timestamp).tm_year
+            if year not in year_list:
+                year_list.append(year)
+        for actuator_data in actuator_datas:
+            year = time.localtime(actuator_data.timestamp).tm_year
+            if year not in year_list:
+                year_list.append(year)
+        year_list.sort()
+        return BasicResponse(HTTPStatus.OK, "get year list success", year_list)
+
 class DataList(Resource):
     @marshal_with(basic_response)
     @jwt_required()
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('type', type=int, required=False)
         parser.add_argument('level', type=int, required=False)
@@ -90,18 +52,38 @@ class DataList(Resource):
         sensor_datas = None
         actuator_datas = None
         
-        timestamp_from = time.mktime((
-            year if year is not None else 1970,
-            month if month is not None else 1,
-            day if day is not None else 1,
-            0, 0, 0, 0, 0, 0
-        ))
-        timestamp_to = time.mktime((
-            year + 1 if year is not None else time.localtime().tm_year + 1,
-            month + 1 if month is not None else 1,
-            day + 1 if day is not None else 1,
-            0, 0, 0, 0, 0, 0
-        ))
+        start_year, start_month, start_day = 1971, 1, 1
+        end_year, end_month, end_day = time.localtime().tm_year + 1, 1, 1
+        if year is not None:
+            start_year = year
+            if month is not None:
+                start_month = month
+                if day is not None:
+                    start_day = day
+                    end_day = day + 1
+                    end_month = month
+                    end_year = year
+                else:
+                    start_day = 1
+                    end_day = 1
+                    end_month = month + 1
+                    end_year = year
+            else:
+                start_day = 1
+                start_month = 1
+                end_day = 1
+                end_month = 1
+                end_year = year + 1
+        else:
+            start_day = 1
+            start_month = 1
+            start_year = 1971
+            end_day = 1
+            end_month = 1
+            end_year = time.localtime().tm_year + 1
+        
+        timestamp_from = time.mktime((start_year, start_month, start_day, 0, 0, 0, 0, 0, 0))
+        timestamp_to = time.mktime((end_year, end_month, end_day, 0, 0, 0, 0, 0, 0))
         
         if type is None:
             if level is None:
