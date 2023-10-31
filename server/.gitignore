@@ -1,0 +1,5 @@
+.venv/
+
+config.yaml
+
+.DS_Store
