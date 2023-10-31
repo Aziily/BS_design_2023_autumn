@@ -120,6 +120,33 @@ export const constantRoutes = [
   },
 
   {
+    path: '/user',
+    name: 'User',
+    redirect: '/user/list',
+    component: Layout,
+    meta: { title: 'User', icon: 'el-icon-user' },
+    children: [
+      {
+        path: 'list',
+        name: 'UserList',
+        component: () => import('@/views/user/index'),
+        meta: { title: 'UserList', icon: 'el-icon-user' }
+      },
+      {
+        path: 'add',
+        name: 'UserAdd',
+        component: () => import('@/views/user/add'),
+        meta: { title: 'UserAdd', icon: 'el-icon-plus' }
+      },
+      {
+        path: 'edit',
+        name: 'UserEdit',
+        component: () => import('@/views/user/edit')
+      }
+    ]
+  },
+
+  {
     path: 'external-link',
     component: Layout,
     children: [

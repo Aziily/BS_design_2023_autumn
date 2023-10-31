@@ -9,12 +9,13 @@ def Initialize():
     api.prefix = '/api'
     
     # /user
-    api.add_resource(UserRegister, '/user/register')
+    api.add_resource(UserList, '/user/list')
+    api.add_resource(UserAdd, '/user/add')
     api.add_resource(UserLogin, '/user/login')
     api.add_resource(UserLogout, '/user/logout')
     api.add_resource(UserInfo, '/user/info')
-    api.add_resource(UserUpdate, '/user/update')
-    api.add_resource(UserDelete, '/user/delete')
+    api.add_resource(UserUpdate, '/user/update/<int:uid>')
+    api.add_resource(UserDelete, '/user/delete/<int:uid>')
     
     # /device
     api.add_resource(DeviceList, '/device/list')

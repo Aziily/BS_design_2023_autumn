@@ -59,7 +59,7 @@ class UserLogout(Resource):
     def get(self):
         return BasicResponse(HTTPStatus.OK, "logout success", None)
     
-class UserRegister(Resource):
+class UserAdd(Resource):
     @marshal_with(basic_response)
     def post(self):
         parser = reqparse.RequestParser()
@@ -107,7 +107,7 @@ class UserInfo(Resource):
 class UserUpdate(Resource):
     @marshal_with(basic_response)
     @jwt_required()
-    def post(self):
+    def post(self, uid):
         parser = reqparse.RequestParser()
         parser.add_argument('password', type=str, required=False)
         parser.add_argument('email', type=str, required=False)
@@ -116,6 +116,9 @@ class UserUpdate(Resource):
                 
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
+        if user is None or (user.role != 0 and user.uid != uid):
+            return BasicResponse(HTTPStatus.UNAUTHORIZED, "user not found", None)
+        user = User.query.filter_by(uid=uid).first()
         
         if user is None:
             return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
@@ -127,6 +130,9 @@ class UserUpdate(Resource):
             if args['email'] is not None:
                 if not checkEmail(args['email']):
                     return BasicResponse(HTTPStatus.BAD_REQUEST, "email format error", None)
+                user_email = User.query.filter_by(email=args['email']).first()
+                if user_email is not None and user_email.uid != uid:
+                    return BasicResponse(HTTPStatus.CONFLICT, "email already exist", None)
                 user.email = args['email']
             if args['phone'] is not None:
                 user.phone = args['phone']
@@ -137,13 +143,31 @@ class UserUpdate(Resource):
 class UserDelete(Resource):
     @marshal_with(basic_response)
     @jwt_required()
-    def post(self):
+    def post(self, uid):
+        username = get_jwt_identity()
+        user = User.query.filter_by(username=username).first()
+        
+        if user is None or (user.role != 0 and user.uid != uid):
+            return BasicResponse(HTTPStatus.UNAUTHORIZED, "user not found", None)
+        else:
+            user = User.query.filter_by(uid=uid).first()
+            db.session.delete(user)
+            db.session.commit()
+            return BasicResponse(HTTPStatus.OK, "delete user success", None)
+        
+class UserList(Resource):
+    @marshal_with(basic_response)
+    @jwt_required()
+    def get(self):
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         
         if user is None:
             return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
+        elif user.role != 0:
+            udata = marshal(user, user_data)
+            return BasicResponse(HTTPStatus.OK, "get user list success", udata)
         else:
-            db.session.delete(user)
-            db.session.commit()
-            return BasicResponse(HTTPStatus.OK, "delete user success", None)
+            users = User.query.all()
+            udata = marshal(users, user_data)
+            return BasicResponse(HTTPStatus.OK, "get user list success", udata)

@@ -125,3 +125,22 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.device-edit-container {
+  .card-head {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+  }
+  .card-head::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 2px;
+    background-color: #000000;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+}
+</style>

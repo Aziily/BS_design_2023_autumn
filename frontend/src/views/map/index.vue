@@ -82,7 +82,20 @@ export default {
 <style lang="scss" scoped>
 .amap-page-container{
   height: 100%;
-
+  .card-head {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+  }
+  .card-head::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 2px;
+    background-color: #000000;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
   .amap-block {
     height: 80vh;
   }
