@@ -244,6 +244,7 @@ class UserLogout(Resource):
     
 class UserAdd(Resource):
     @marshal_with(basic_response)
+    @jwt_required()
     def post(self):
         """
         User Register
@@ -251,6 +252,11 @@ class UserAdd(Resource):
         tags:
             - User
         parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
             - in: body
               name: body
               type: object
@@ -316,6 +322,19 @@ class UserAdd(Resource):
                             example: username length error
                         data:
                             type: null
+            401:
+                description: Unauthorized
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 401
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
             409:
                 description: User already exist
                 schema:
@@ -330,6 +349,11 @@ class UserAdd(Resource):
                         data:
                             type: null
         """
+        
+        username = get_jwt_identity()
+        user = User.query.filter_by(username=username).first()
+        if user is None or user.role != 0:
+            return BasicResponse(HTTPStatus.UNAUTHORIZED, "no permission", None)
         
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
