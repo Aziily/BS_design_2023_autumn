@@ -28,6 +28,7 @@
 <script>
 import { add } from '@/api/user'
 import { getToken } from '@/utils/auth'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UserAdd',
@@ -66,6 +67,16 @@ export default {
         email: '',
         phone: ''
       }
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'role'
+    ])
+  },
+  mounted() {
+    if (this.role !== 0) {
+      this.$router.push({ path: '/404' })
     }
   },
   methods: {
