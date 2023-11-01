@@ -12,7 +12,20 @@ This is the project for the assignment of ZJU BS Design in 2023 autumn-winter te
 
 ### Docker
 
-Docker image is on the way
+```shell
+# pull the image
+docker pull azily/bs_design
+# run one container
+docker run -dit -p 15000:5000 -p 19528:9528 --name BS azily/bs_design:latest /bin/sh /start.sh
+```
+
+Then the server can be used on `localhost:19528`.
+
+> Also, the API documentary will on `localhost:15000/apidocs`
+>
+> P.S.: remember to use ports are not in usage
+
+
 
 ### Local
 

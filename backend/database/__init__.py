@@ -9,11 +9,7 @@ from exts import db
 
 from .models import *
 
-def Initialize():
-    user = User.query.filter_by(username="admin").first()
-    if user is not None:
-        return
-    
+def Initialize():    
     db.drop_all()
     db.create_all()
     # user

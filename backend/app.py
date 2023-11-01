@@ -4,6 +4,8 @@ from flask import Flask
 from flask_restful import Api
 from exts import db, api, jwt, swagger
 from omegaconf import OmegaConf
+import os
+import sys
 
 conf = OmegaConf.load("config.yaml")
 global app
@@ -38,11 +40,17 @@ jwt.init_app(app)
 swagger.init_app(app)
  
 if __name__ == '__main__':
-    import database
-    with app.app_context():
-        database.Initialize()
-    import router
+    os.chdir(os.path.dirname(__file__))
+    args = sys.argv
     
+    # has argument and argument is "init"
+    if len(args) > 1 and args[1] == "init":
+        import database
+        with app.app_context():
+            database.Initialize()
+        exit(0)
+
+    import router    
     router.Initialize()
     
     from gevent.pywsgi import WSGIServer

@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'IoT Controller',
+  title: 'IoT Panel',
 
   /**
    * @type {boolean} true | false

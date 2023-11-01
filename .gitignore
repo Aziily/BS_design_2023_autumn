@@ -1,5 +1,6 @@
 # vscode
 .vscode/
 .history/
+logs/
 
 .DS_Store

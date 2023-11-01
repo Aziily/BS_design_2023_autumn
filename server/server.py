@@ -5,6 +5,7 @@ import time
 from paho.mqtt import client as mqtt_client
 import pymysql
 import atexit
+import os
 
 from omegaconf import OmegaConf
 conf = OmegaConf.load("config.yaml")
@@ -140,5 +141,6 @@ def defer():
     conn.close()
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(__file__))
     atexit.register(defer)
     run()
