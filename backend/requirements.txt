@@ -7,3 +7,4 @@ flasgger
 pymysql
 flask-jwt-extended
 omegaconf
+gevent

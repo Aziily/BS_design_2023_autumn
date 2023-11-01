@@ -42,5 +42,10 @@ if __name__ == '__main__':
     with app.app_context():
         database.Initialize()
     import router
+    
     router.Initialize()
-    app.run(host=conf.service.host, port=conf.service.port, debug=conf.service.debug)
+    
+    from gevent.pywsgi import WSGIServer
+    # app.run(host=conf.service.host, port=conf.service.port, debug=conf.service.debug)
+    web_server = WSGIServer((conf.service.host, int(conf.service.port)), app)
+    web_server.serve_forever()
