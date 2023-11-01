@@ -2,7 +2,7 @@ import datetime
 import flask
 from flask import Flask
 from flask_restful import Api
-from exts import db, api, jwt
+from exts import db, api, jwt, swagger
 from omegaconf import OmegaConf
 
 conf = OmegaConf.load("config.yaml")
@@ -35,6 +35,7 @@ db.init_app(app)
 api.app = app
 api.init_app(app)
 jwt.init_app(app)
+swagger.init_app(app)
  
 if __name__ == '__main__':
     import database

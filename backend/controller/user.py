@@ -15,6 +15,84 @@ class UserLogin(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self):
+        """
+        User Login
+        ---
+        tags:
+            - User
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
+        responses:
+            200:
+                description: Login success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: login success
+                        data:
+                            type: object
+                            properties:
+                                uid:
+                                    type: integer
+                                    example: 1
+                                username:
+                                    type: string
+                                    example: admin
+                                email:
+                                    type: string
+                                    example: admin@example.com
+                                phone:
+                                    type: string
+                                    example: 12345678901
+                                role:
+                                    type: integer
+                                    example: 0
+                                last_login:
+                                    type: string
+                                    example: 2021-01-01 00:00:00
+                                last_ip:
+                                    type: string
+                                    example: 127.0.0.1
+            401:
+                description: Unauthorized
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 401
+                        message:
+                            type: string
+                            example: token not found
+                        data:
+                            type: null
+            404:
+                description: User not found
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 404
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -29,6 +107,90 @@ class UserLogin(Resource):
     
     @marshal_with(basic_response)
     def post(self):
+        """
+        User Login
+        ---
+        tags:
+            - User
+        parameters:
+            - in: body
+              name: body
+              type: object
+              properties:
+                username:
+                    type: string
+                    example: admin
+                password:
+                    type: string
+                    example: admin123
+        responses:
+            200:
+                description: Login success
+                schema:
+                    type: object
+                    properties: 
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: login success
+                        data:
+                            type: object
+                            properties:
+                                uid:
+                                    type: integer
+                                    example: 1
+                                username:
+                                    type: string
+                                    example: admin
+                                email:
+                                    type: string
+                                    example: admin@example.com
+                                phone:
+                                    type: string
+                                    example: 12345678901
+                                role:
+                                    type: integer
+                                    example: 0
+                                last_login:
+                                    type: string
+                                    example: 2021-01-01 00:00:00
+                                last_ip:
+                                    type: string
+                                    example: 127.0.0.1
+            401:
+                description: Unauthorized
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 401
+                        message:
+                            type: string
+                            example: token not found
+                        data:
+                            type: null
+            404:
+                description: User not found
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 404
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+                            
+        """        
+        
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
@@ -57,11 +219,118 @@ class UserLogin(Resource):
 class UserLogout(Resource):
     @marshal_with(basic_response)
     def get(self):
+        """
+        User Logout
+        ---
+        tags:
+            - User
+        responses:
+            200:
+                description: Logout success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        message:
+                            type: string
+                            example: logout success
+                        data:
+                            type: null
+        """
+        
         return BasicResponse(HTTPStatus.OK, "logout success", None)
     
 class UserAdd(Resource):
     @marshal_with(basic_response)
     def post(self):
+        """
+        User Register
+        ---
+        tags:
+            - User
+        parameters:
+            - in: body
+              name: body
+              type: object
+              properties:
+                username:
+                    type: string
+                    example: admin
+                password:
+                    type: string
+                    example: admin123
+                email:
+                    type: string
+                    example: admin@example.com
+                phone:
+                    type: string
+                    example: 12345678901
+        responses:
+            200:
+                description: Register success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        message:
+                            type: string
+                            example: register success
+                        data:
+                            type: object
+                            properties:
+                                uid:
+                                    type: integer
+                                    example: 1
+                                username:
+                                    type: string
+                                    example: admin
+                                email:
+                                    type: string
+                                    example: admin@example.com
+                                phone:
+                                    type: string
+                                    example: 12345678901
+                                role:
+                                    type: integer
+                                    example: 0
+                                last_login:
+                                    type: string
+                                    example: 2021-01-01 00:00:00
+                                last_ip:
+                                    type: string
+                                    example: 127.0.0.1
+            400:
+                description: Data format error
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 400
+                        message:
+                            type: string
+                            example: username length error
+                        data:
+                            type: null
+            409:
+                description: User already exist
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 409
+                        message:
+                            type: string
+                            example: user already exist
+                        data:
+                            type: null
+        """
+        
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
@@ -96,6 +365,71 @@ class UserInfo(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self):
+        """
+        Get User Info
+        ---
+        tags:
+            - User
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
+        responses:
+            200:
+                description: Get user info success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: get user info success
+                        data:
+                            type: object
+                            properties:
+                                uid:
+                                    type: integer
+                                    example: 1
+                                username:
+                                    type: string
+                                    example: admin
+                                email:
+                                    type: string
+                                    example: admin@example.com
+                                phone:
+                                    type: string
+                                    example: 12345678901
+                                role:
+                                    type: integer
+                                    example: 0
+                                last_login:
+                                    type: string
+                                    example: 2021-01-01 00:00:00
+                                last_ip:
+                                    type: string
+                                    example: 127.0.0.1
+            404:
+                description: User not found
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 404
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+        """
+        
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         if user is None:
@@ -108,6 +442,128 @@ class UserUpdate(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def post(self, uid):
+        """
+        Update User Info
+        ---
+        tags:
+            - User
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
+            - in: path
+              name: uid
+              type: integer
+              required: true
+              description: User ID
+            - in: body
+              name: body
+              type: object
+              properties:
+                password:
+                    type: string
+                    example: admin123
+                email:
+                    type: string
+                    example: admin@example.com
+                phone:
+                    type: string
+                    example: 12345678901
+        responses:
+            200:
+                description: Update user info success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: update user info success
+                        data:
+                            type: object
+                            properties:
+                                uid:
+                                    type: integer
+                                    example: 1
+                                username:
+                                    type: string
+                                    example: admin
+                                email:
+                                    type: string
+                                    example: admin@example.com
+                                phone:
+                                    type: string
+                                    example: 12345678901
+                                role:
+                                    type: integer
+                                    example: 0
+                                last_login:
+                                    type: string
+                                    example: 2021-01-01 00:00:00
+                                last_ip:
+                                    type: string
+                                    example: 127.0.0.1
+            400:
+                description: Data format error
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 400
+                        message:
+                            type: string
+                            example: password length error
+                        data:
+                            type: null
+            401:
+                description: Unauthorized
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 401
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+            404:
+                description: User not found
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 404
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+            409:
+                description: Email already exist
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 409
+                        message:
+                            type: string
+                            example: email already exist
+                        data:
+                            type: null
+        """
+        
         parser = reqparse.RequestParser()
         parser.add_argument('password', type=str, required=False)
         parser.add_argument('email', type=str, required=False)
@@ -144,6 +600,54 @@ class UserDelete(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def post(self, uid):
+        """
+        Delete User
+        ---
+        tags:
+            - User
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
+            - in: path
+              name: uid
+              type: integer
+              required: true
+              description: User ID
+        responses:
+            200:
+                description: Delete user success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: delete user success
+                        data:
+                            type: null
+            401:
+                description: Unauthorized
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 401
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+        """
+        
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         
@@ -159,6 +663,73 @@ class UserList(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self):
+        """
+        Get User List
+        ---
+        tags:
+            - User
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: Bearer token
+        responses:
+            200:
+                description: Get user list success
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 200
+                        token:
+                            type: string
+                            example: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+                        message:
+                            type: string
+                            example: get user list success
+                        data:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    uid:
+                                        type: integer
+                                        example: 1
+                                    username:
+                                        type: string
+                                        example: admin
+                                    email:
+                                        type: string
+                                        example: admin@example.com
+                                    phone:
+                                        type: string
+                                        example: 12345678901
+                                    role:
+                                        type: integer
+                                        example: 0
+                                    last_login:
+                                        type: string
+                                        example: 2021-01-01 00:00:00
+                                    last_ip:
+                                        type: string
+                                        example: 127.0.0.1
+            404:
+                description: User not found
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            example: 404
+                        message:
+                            type: string
+                            example: user not found
+                        data:
+                            type: null
+        """
+        
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         

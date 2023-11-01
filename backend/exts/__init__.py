@@ -15,4 +15,7 @@ api = Api()
 # jwt
 from flask_jwt_extended import JWTManager
 jwt = JWTManager()
+
+from flasgger import Swagger
+swagger = Swagger()
  

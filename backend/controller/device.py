@@ -15,6 +15,105 @@ class DeviceList(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self):
+        """
+        Get device list.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+        responses:
+            200:
+                description: Get device list success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: get device list success
+                        data:
+                            type: array
+                            description: The device list.
+                            items:
+                                type: object
+                                properties:
+                                    did:
+                                        type: integer
+                                        description: The device id.
+                                        example: 1
+                                    uid:
+                                        type: integer
+                                        description: The user id.
+                                        example: 1
+                                    name:
+                                        type: string
+                                        description: The device name.
+                                        example: device1
+                                    description:
+                                        type: string
+                                        description: The device description.
+                                        example: this is a device
+                                    type:
+                                        type: integer
+                                        description: The device type.
+                                        example: 0
+                                    status:
+                                        type: integer
+                                        description: The device status.
+                                        example: 0
+                                    ip:
+                                        type: string
+                                        description: The device ip.
+                                        example: 127.0.0.1
+                                    longitude:
+                                        type: float
+                                        description: The device longitude.
+                                        example: 0
+                                    latitude:
+                                        type: float
+                                        description: The device latitude.
+                                        example: 0
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -36,6 +135,150 @@ class DeviceAdd(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def post(self):
+        """
+        Add device.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+            - in: body
+              name: body
+              type: object
+              required: true
+              description: The device info.
+              properties:
+                name:
+                    type: string
+                    description: The device name.
+                    example: device1
+                description:
+                    type: string
+                    description: The device description.
+                    example: this is a device
+                type:
+                    type: integer
+                    description: The device type.
+                    example: 0
+                status:
+                    type: integer
+                    description: The device status.
+                    example: 0
+                ip:
+                    type: string
+                    description: The device ip.
+                    example: 127.0.0.1
+                longitude:
+                    type: float
+                    description: The device longitude.
+                    example: 0
+                latitude:
+                    type: float
+                    description: The device latitude.
+                    example: 0
+        responses:
+            200:
+                description: Add device success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: add device success
+                        data:
+                            type: object
+                            description: The device info.
+                            properties:
+                                did:
+                                    type: integer
+                                    description: The device id.
+                                    example: 1
+                                uid:
+                                    type: integer
+                                    description: The user id.
+                                    example: 1
+                                name:
+                                    type: string
+                                    description: The device name.
+                                    example: device1
+                                description:
+                                    type: string
+                                    description: The device description.
+                                    example: this is a device
+                                type:
+                                    type: integer
+                                    description: The device type.
+                                    example: 0
+                                status:
+                                    type: integer
+                                    description: The device status.
+                                    example: 0
+                                ip:
+                                    type: string
+                                    description: The device ip.
+                                    example: 127.0.0.1
+                                longitude:
+                                    type: float
+                                    description: The device longitude.
+                                    example: 0
+                                latitude:
+                                    type: float
+                                    description: The device latitude.
+                                    example: 0
+            400:
+                description: Data format error.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 400
+                        message:
+                            type: string
+                            description: The response message.
+                            example: device name too long
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -97,6 +340,108 @@ class DeviceInfo(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self, did):
+        """
+        Get device info.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+            - in: path
+              name: did
+              type: integer
+              required: true
+              description: The device id.
+        responses:
+            200:
+                description: Get device info success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: get device info success
+                        data:
+                            type: object
+                            description: The device info.
+                            properties:
+                                did:
+                                    type: integer
+                                    description: The device id.
+                                    example: 1
+                                uid:
+                                    type: integer
+                                    description: The user id.
+                                    example: 1
+                                name:
+                                    type: string
+                                    description: The device name.
+                                    example: device1
+                                description:
+                                    type: string
+                                    description: The device description.
+                                    example: this is a device
+                                type:
+                                    type: integer
+                                    description: The device type.
+                                    example: 0
+                                status:
+                                    type: integer
+                                    description: The device status.
+                                    example: 0
+                                ip:
+                                    type: string
+                                    description: The device ip.
+                                    example: 127.0.0.1
+                                longitude:
+                                    type: float
+                                    description: The device longitude.
+                                    example: 0
+                                latitude:  
+                                    type: float
+                                    description: The device latitude.
+                                    example: 0
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -118,6 +463,155 @@ class DeviceUpdate(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def post(self, did):
+        """
+        Update device info.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+            - in: path
+              name: did
+              type: integer
+              required: true
+              description: The device id.
+            - in: body
+              name: body
+              type: object
+              required: true
+              description: The device info.
+              properties:
+                name:
+                    type: string
+                    description: The device name.
+                    example: device1
+                description:
+                    type: string
+                    description: The device description.
+                    example: this is a device
+                type:
+                    type: integer
+                    description: The device type.
+                    example: 0
+                status:
+                    type: integer
+                    description: The device status.
+                    example: 0
+                ip:
+                    type: string
+                    description: The device ip.
+                    example: 127.0.0.1
+                longitude:
+                    type: float
+                    description: The device longitude.
+                    example: 0
+                latitude:
+                    type: float
+                    description: The device latitude.
+                    example: 0
+        responses:
+            200:
+                description: Update device info success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: update device success
+                        data:
+                            type: object
+                            description: The device info.
+                            properties:
+                                did:
+                                    type: integer
+                                    description: The device id.
+                                    example: 1
+                                uid:
+                                    type: integer
+                                    description: The user id.
+                                    example: 1
+                                name:
+                                    type: string
+                                    description: The device name.
+                                    example: device1
+                                description:
+                                    type: string
+                                    description: The device description.
+                                    example: this is a device
+                                type:
+                                    type: integer
+                                    description: The device type.
+                                    example: 0
+                                status:
+                                    type: integer
+                                    description: The device status.
+                                    example: 0
+                                ip:
+                                    type: string
+                                    description: The device ip.
+                                    example: 127.0.0.1
+                                longitude:
+                                    type: float
+                                    description: The device longitude.
+                                    example: 0
+                                latitude:
+                                    type: float
+                                    description: The device latitude.
+                                    example: 0
+            400:
+                description: Data format error.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 400
+                        message:
+                            type: string
+                            description: The response message.
+                            example: device name too long
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -175,6 +669,108 @@ class DeviceDelete(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def post(self, did):
+        """
+        Delete device.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+            - in: path
+              name: did
+              type: integer
+              required: true
+              description: The device id.
+        responses:
+            200:
+                description: Delete device success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: delete device success
+                        data:
+                            type: object
+                            description: The device info.
+                            properties:
+                                did:
+                                    type: integer
+                                    description: The device id.
+                                    example: 1
+                                uid:
+                                    type: integer
+                                    description: The user id.
+                                    example: 1
+                                name:
+                                    type: string
+                                    description: The device name.
+                                    example: device1
+                                description:
+                                    type: string
+                                    description: The device description.
+                                    example: this is a device
+                                type:
+                                    type: integer
+                                    description: The device type.
+                                    example: 0
+                                status:
+                                    type: integer
+                                    description: The device status.
+                                    example: 0
+                                ip:
+                                    type: string
+                                    description: The device ip.
+                                    example: 127.0.0.1
+                                longitude: 
+                                    type: float
+                                    description: The device longitude.
+                                    example: 0
+                                latitude:
+                                    type: float
+                                    description: The device latitude.
+                                    example: 0
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
@@ -198,6 +794,111 @@ class DeviceData(Resource):
     @marshal_with(basic_response)
     @jwt_required()
     def get(self, did):
+        """ 
+        Get device data.
+        ---
+        tags:
+            - device
+        parameters:
+            - in: header
+              name: Authorization
+              type: string
+              required: true
+              description: The token value.
+            - in: path
+              name: did
+              type: integer
+              required: true
+              description: The device id.
+        responses:
+            200:
+                description: Get device data success.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 200
+                        token:
+                            type: string
+                            description: The token value.
+                            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2MjE1NjQxNzMsImlhdCI6MTYyMTU2MjU3M30.8J5RmX7Yy2QY0J6Q5WdYbZvX7n1r6qO9kX8cI6Wj0VU
+                        message:
+                            type: string
+                            description: The response message.
+                            example: get sensor data success
+                        data:
+                            type: array
+                            description: The sensor data.
+                            items:
+                                type: object
+                                properties:
+                                    sdid:
+                                        type: integer
+                                        description: The sensor data id.
+                                        example: 1
+                                    did:
+                                        type: integer
+                                        description: The device id.
+                                        example: 1
+                                    level:
+                                        type: integer
+                                        description: The sensor data level.
+                                        example: 0
+                                    message:
+                                        type: string
+                                        description: The sensor data message.
+                                        example: this is a sensor data
+                                    timestamp:
+                                        type: integer
+                                        description: The sensor data timestamp.
+                                        example: 1621567000
+                                    data:
+                                        type: float
+                                        description: The sensor data.
+                                        example: 1.0
+            400:
+                description: Data format error.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 400
+                        message:
+                            type: string
+                            description: The response message.
+                            example: device type error
+            401:
+                description: Token not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 401
+                        message:
+                            type: string
+                            description: The response message.
+                            example: token not found
+            404:
+                description: User not found.
+                schema:
+                    type: object
+                    properties:
+                        code:
+                            type: integer
+                            description: The response code.
+                            example: 404
+                        message:
+                            type: string
+                            description: The response message.
+                            example: user not found
+        """
+        
         token = request.headers.get('Authorization')
         if token is None:
             return BasicResponse(HTTPStatus.UNAUTHORIZED, "token not found", None)
