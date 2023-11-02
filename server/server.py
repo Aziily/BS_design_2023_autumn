@@ -53,7 +53,16 @@ devices_map = {}
 conn = pymysql.connect(host=conf.database.ip, port=int(conf.database.port), user=conf.database.user, password=conf.database.password, db=conf.database.database)
 cursor = conn.cursor()
 
+def checkConn():
+    global conn, cursor
+    try:
+        conn.ping()
+    except:
+        conn = pymysql.connect(host=conf.database.ip, port=int(conf.database.port), user=conf.database.user, password=conf.database.password, db=conf.database.database)
+        cursor = conn.cursor()
+
 def getDeviceList():
+    checkConn()
     cursor.execute("SELECT * FROM device")
     deviceList = []
     for row in cursor.fetchall():
@@ -117,6 +126,7 @@ def on_message(client, userdata, msg):
         data = int(msg_payload[3])
     else:
         return
+    checkConn()
     table = "sensor_data" if 'sensor' in msg.topic else "actuator_data"
     cursor.execute("INSERT INTO " + table + " (did, level, message, timestamp, data) VALUES (%s, %s, %s, %s, %s)", (did, level, message, timestamp, data))
     conn.commit()

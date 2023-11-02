@@ -760,7 +760,8 @@ class UserList(Resource):
         if user is None:
             return BasicResponse(HTTPStatus.NOT_FOUND, "user not found", None)
         elif user.role != 0:
-            udata = marshal(user, user_data)
+            users = User.query.filter_by(uid=user.uid).all()
+            udata = marshal(users, user_data)
             return BasicResponse(HTTPStatus.OK, "get user list success", udata)
         else:
             users = User.query.all()
