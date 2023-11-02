@@ -158,5 +158,16 @@ Also, use `user` as a struct of user item, `device` as a struct of device item a
 
 ## 4 Demo show
 
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.04.31.png" alt="截屏2023-11-02 10.04.31" style="zoom:50%;" />
 
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.11.44.png" alt="截屏2023-11-02 10.11.44" style="zoom:50%;" />
 
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.18.10.png" alt="截屏2023-11-02 10.18.10" style="zoom:50%;" />
+
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.26.24.png" alt="截屏2023-11-02 10.26.24" style="zoom:50%;" />
+
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.30.34.png" alt="截屏2023-11-02 10.30.34" style="zoom:50%;" />
+
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.33.14.png" alt="截屏2023-11-02 10.33.14" style="zoom:50%;" />
+
+<img src="./imgs/%E6%88%AA%E5%B1%8F2023-11-02%2010.36.10.png" alt="截屏2023-11-02 10.36.10" style="zoom:50%;" />
