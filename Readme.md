@@ -19,7 +19,7 @@ docker pull azily/bs_design
 docker run -dit -p 15000:5000 -p 19528:9528 --name BS azily/bs_design:latest /bin/sh /start.sh
 ```
 
-Then the server can be used on `localhost:19528`.
+After waiting for about 15s for the container initializtion, then the server can be used on `localhost:19528`.
 
 > Also, the API documentary will on `localhost:15000/apidocs`
 >
@@ -93,6 +93,8 @@ Then the server can be used on `localhost:19528`.
 
 
 
-## Other
+## P.S.
 
 Th backend api doc can be seen in `localhost:5000/apidocs`
+
+**The init data script is in `backend/database/__init__.py`, if you do not want to use the init data, comment them. Remember there need at least a admiin user, or you may not use all function.**
